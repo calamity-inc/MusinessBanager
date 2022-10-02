@@ -857,28 +857,6 @@ for index, filepath in ipairs(filesystem.list_files(MB_TRANSLATIONS_DIR)) do
         path = filepath, version = version, uptodate = uptodate, ood_msg = ood_msg, author = author, filename = filename, langcode = langcode,
     }
 end
-
-local SelectedLanguage
-if #Languages > 1 then
-    local LanguageSelector = menu.list_action(menu.my_root(), "Language", {"mblang"}, "", Languages, function(index, name)
-        SelectedLanguage = name
-        if index ~= 1 then
-            if not Languages[index].uptodate then
-                util.toast("Translation file is out of date!")
-                util.log("Translation file is out of date!")
-            end
-            TranslateLabels(Languages[index])
-        end
-    end)
-        
-    while SelectedLanguage == nil do
-        util.yield()
-    end
-        
-    menu.delete(LanguageSelector)
-else
-    SelectedLangauge = Languages[1][1]
-end
 --#endregion Translation Functions
 
 local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
