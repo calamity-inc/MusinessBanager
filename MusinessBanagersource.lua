@@ -860,10 +860,8 @@ end
 --#endregion Translation Functions
 
 local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
-local ACCEPTED_WARNING = false
-while not ACCEPTED_WARNING do
-    menu.show_warning(menu_findsaferways, CLICK_HOTKEY, MenuLabels.WARNINGRISKY_TOAST, function() ACCEPTED_WARNING = true end, function() util.stop_script() end, false)
-    util.yield()
+if not SCRIPT_SILENT_START then
+	util.toast(MenuLabels.WARNINGRISKY_TOAST)
 end
 
 -----------------------------------
