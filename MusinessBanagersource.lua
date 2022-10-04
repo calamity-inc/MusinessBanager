@@ -5,12 +5,11 @@ Credits:
 
 Script created by ICYPhoenix#0727 and Ren#5219
 ]]
-util.require_natives(1651208000)
-local DISALLOW_EZ_SKIDDING <const> = "get fucked" in "the ass"   ---@diagnostic disable-line: exp-in-action, unknown-symbol -- op new pluto bytecode breaks most/all decompilers 
-local IS_RELEASE_VERSION <const> = true -- Set to false to enable debug shit
-local IS_BETA_VERSION <const> = false -- if true, make IS_RELEASE_VERSION true as well.
+--util.require_natives(1651208000)
+local IS_RELEASE_VERSION <const> = false
+local IS_BETA_VERSION <const> = false
 local IGNORE_VERSION_DIFFERENCE <const> = false
-local THIS_RELEASE_VERSION <const> = "0.3.2"
+local THIS_RELEASE_VERSION <const> = "1.0.0"
 local STAND_RESOURCE_DIR = filesystem.resources_dir()
 local MB_RESOUCES_DIR = STAND_RESOURCE_DIR .. "Musiness Banager/"
 local MB_TRANSLATIONS_DIR = MB_RESOUCES_DIR .. "Translations/"
@@ -18,11 +17,45 @@ local MBPrefix = "[MusinessBanager] "
 local og_toast = util.toast
 local og_log = util.log
 local nullsub = function() --[[util.toast("nullsub")]] end
-util.toast = function(str, flag) assert(str, "No string given") if flag ~= nil then og_toast(MBPrefix .. tostring(str), flag) else og_toast(MBPrefix .. tostring(str)) end end
-util.log = function(str) assert(str, "No string given") og_log(MBPrefix .. str) end
-util.yield_x = function(int) for i = 1, int do util.yield() end end -- yields x amount of ticks
---util.debug_log = IS_RELEASE_VERSION and nullsub or util.log
---util.debug_toast = IS_RELEASE_VERSION and nullsub or util.toast
+util.toast = function(str, flag) assert(str != nil, "No string given") if flag ~= nil then og_toast(MBPrefix .. tostring(str), flag) else og_toast(MBPrefix .. tostring(str)) end end
+util.log = function(str) assert(str != nil, "No string given") og_log(MBPrefix .. tostring(str)) end
+util.yield_x = function(int) for i = 1, int do util.internal_yield() end end -- yields x amount of ticks
+local menu, players, entities, directx, util, v3, lang, filesystem, async_http, memory = menu, players, entities, directx, util, v3, lang, filesystem, async_http, memory
+
+--#region natives
+-- regex for removing comments in the native arguments: --\[\[(?:(?:\w)|(?:\d)|\*)*(?: \((?:(?:\w)|(?:\d)|\*)*\))*\]\] 
+-- regex for finding natives in the script that have not yet been converted to local-natives: [A-Z][A-Z][A-Z]\.(?:_|[A-Z][A-Z][A-Z][A-Z][A-Z])
+local nv = native_invoker
+local ENTITY_SET_ENTITY_COORDS_NO_OFFSET                                = function(entity,xPos,yPos,zPos,xAxis,yAxis,zAxis)nv.begin_call();nv.push_arg_int(entity);nv.push_arg_float(xPos);nv.push_arg_float(yPos);nv.push_arg_float(zPos);nv.push_arg_bool(xAxis);nv.push_arg_bool(yAxis);nv.push_arg_bool(zAxis);nv.end_call("239A3351AC1DA385");end
+local ENTITY_GET_ENTITY_COORDS                                          = function(entity,alive)nv.begin_call();nv.push_arg_int(entity);nv.push_arg_bool(alive);nv.end_call("3FEF770D40960D5A");return nv.get_return_value_vector3();end
+local ENTITY_FREEZE_ENTITY_POSITION                                     = function(entity,toggle)nv.begin_call();nv.push_arg_int(entity);nv.push_arg_bool(toggle);nv.end_call("428CA6DBD1094446");end
+local CAM_CREATE_CAM_WITH_PARAMS                                        = function(camName,posX,posY,posZ,rotX,rotY,rotZ,fov,p8,p9)nv.begin_call();nv.push_arg_string(camName);nv.push_arg_float(posX);nv.push_arg_float(posY);nv.push_arg_float(posZ);nv.push_arg_float(rotX);nv.push_arg_float(rotY);nv.push_arg_float(rotZ);nv.push_arg_float(fov);nv.push_arg_bool(p8);nv.push_arg_int(p9);nv.end_call("B51194800B257161");return nv.get_return_value_int();end
+local CAM_DESTROY_CAM                                                   = function(cam,bScriptHostCam)nv.begin_call();nv.push_arg_int(cam);nv.push_arg_bool(bScriptHostCam);nv.end_call("865908C81A2C22E9");end
+local CAM_GET_FINAL_RENDERED_CAM_FOV                                    = function()nv.begin_call();nv.end_call("80EC114669DAEFF4");return nv.get_return_value_float();end
+local CAM_GET_FINAL_RENDERED_CAM_ROT                                    = function(rotationOrder)nv.begin_call();nv.push_arg_int(rotationOrder);nv.end_call("5B4E4C817FCC2DFB");return nv.get_return_value_vector3();end
+local CAM_SET_CAM_ACTIVE                                                = function(cam,active)nv.begin_call();nv.push_arg_int(cam);nv.push_arg_bool(active);nv.end_call("026FB97D0A425F84");end
+local CAM_RENDER_SCRIPT_CAMS                                            = function(render,ease,easeTime,p3,p4,p5)nv.begin_call();nv.push_arg_bool(render);nv.push_arg_bool(ease);nv.push_arg_int(easeTime);nv.push_arg_bool(p3);nv.push_arg_bool(p4);nv.push_arg_int(p5);nv.end_call("07E5B515DB0636FC");end
+local GRAPHICS_TOGGLE_PAUSED_RENDERPHASES                               = function(toggle)nv.begin_call();nv.push_arg_bool(toggle);nv.end_call("DFC252D8A3E15AB7");end
+local GRAPHICS_DONT_RENDER_IN_GAME_UI                                   = function(p0)nv.begin_call();nv.push_arg_bool(p0);nv.end_call("22A249A53034450A");end
+local PAD_SET_CONTROL_VALUE_NEXT_FRAME                                  = function(padIndex,control,amount)nv.begin_call();nv.push_arg_int(padIndex);nv.push_arg_int(control);nv.push_arg_float(amount);nv.end_call("E8A25867FBA3B05E");return nv.get_return_value_bool();end
+local PAD_SET_CURSOR_POSITION                                           = function(x,y)nv.begin_call();nv.push_arg_float(x);nv.push_arg_float(y);nv.end_call("FC695459D4D0E219");return nv.get_return_value_bool();end
+local PLAYER_PLAYER_PED_ID                                              = function()nv.begin_call();nv.end_call("D80958FC74E988A6");return nv.get_return_value_int();end
+local SYSTEM_START_NEW_SCRIPT                                           = function(scriptName,stackSize)nv.begin_call();nv.push_arg_string(scriptName);nv.push_arg_int(stackSize);nv.end_call("E81651AD79516E48");return nv.get_return_value_int();end
+local SCRIPT_GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH    = function(scriptHash)nv.begin_call();nv.push_arg_int(scriptHash);nv.end_call("2C83A9DA6BFFC4F9");return nv.get_return_value_int();end
+local SCRIPT_DOES_SCRIPT_EXIST                                          = function(scriptName)nv.begin_call();nv.push_arg_string(scriptName);nv.end_call("FC04745FBE67C19A");return nv.get_return_value_bool();end
+local SCRIPT_REQUEST_SCRIPT                                             = function(scriptName)nv.begin_call();nv.push_arg_string(scriptName);nv.end_call("6EB5F71AA68F2E8E");end
+local SCRIPT_HAS_SCRIPT_LOADED                                          = function(scriptName)nv.begin_call();nv.push_arg_string(scriptName);nv.end_call("E6CC9F3BA0FB9EF1");return nv.get_return_value_bool();end
+local SCRIPT_SET_SCRIPT_AS_NO_LONGER_NEEDED                             = function(scriptName)nv.begin_call();nv.push_arg_string(scriptName);nv.end_call("C90D2DCACD56184C");end
+local STATS_STAT_GET_INT                                                = function(statHash,outValue,p2)nv.begin_call();nv.push_arg_int(statHash);nv.push_arg_pointer(outValue);nv.push_arg_int(p2);nv.end_call("767FBC2AC802EF3D");return nv.get_return_value_bool();end
+local STATS_STAT_SET_INT                                                = function(statName,value,save)nv.begin_call();nv.push_arg_int(statName);nv.push_arg_int(value);nv.push_arg_bool(save);nv.end_call("B3271D7AB655B441");return nv.get_return_value_bool();end
+local STATS_STAT_SET_BOOL                                               = function(statName,value,save)native_invoker.begin_call();native_invoker.push_arg_int(statName);native_invoker.push_arg_bool(value);native_invoker.push_arg_bool(save);native_invoker.end_call("4B33C4243DE0C432");return native_invoker.get_return_value_bool();end
+local STATS_STAT_GET_BOOL                                               = function(statHash,outValue,p2)native_invoker.begin_call();native_invoker.push_arg_int(statHash);native_invoker.push_arg_pointer(outValue);native_invoker.push_arg_int(p2);native_invoker.end_call("11B5E6D2AE73F48E");return native_invoker.get_return_value_bool();end
+local STATS_SET_PACKED_STAT_BOOL_CODE                                   = function(index,value,characterSlot)native_invoker.begin_call();native_invoker.push_arg_int(index);native_invoker.push_arg_bool(value);native_invoker.push_arg_int(characterSlot);native_invoker.end_call("DB8A58AEAA67CD07");end
+local STATS_GET_PACKED_STAT_BOOL_CODE                                   = function(index,characterSlot)native_invoker.begin_call();native_invoker.push_arg_int(index);native_invoker.push_arg_int(characterSlot);native_invoker.end_call("DA7EBFC49AE3F1B0");return native_invoker.get_return_value_bool();end
+local NETSHOPPING_NET_GAMESERVER_TRANSACTION_IN_PROGRESS                = function()native_invoker.begin_call()native_invoker.end_call_2(0x613F125BA3BD2EB9)return native_invoker.get_return_value_bool();end
+local TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME                              = function(scriptName)native_invoker.begin_call()native_invoker.push_arg_string(scriptName)native_invoker.end_call_2(0x9DC711BC69C548DF)end
+
+--#endregion natives
 
 local MenuLabels = {
 	BUNKER="Bunker",
@@ -130,13 +163,13 @@ local MenuLabels = {
 	ENFORCEEASIESTMISSION="Enforce Easiest Sell Mission",
 	ENFORCEEASIESTMISSION_DESC="This will make sure you always get the quickest and easiest sell mission. Although, if you're too quick you may not get paid?",
 
-	SPECIALCARGOLIST_DESC="Note that sell values cap out at $6m.",
+	SPECIALCARGOLIST_DESC="Note that sell values cap out at $10m.",
 
 	SPECIALCARGOWAREHOUSE_DESC="Select which warehouse to monitor and modify, since you can own five of them.",
 	SPECIALCARGOMONITOR_DESC="Displays how many special cargo crates you have in the selected warehouse",
 	SPECIALCARGONOWAREHOUSE="No Warehouse",
 	SPECIALCARGONOWAREHOUSE_DESC="You don't have a warehouse in this slot!",
-	SPECIALCARGOMAXSELLPRICE_DESC="Changes the sell price of your CEO's Special Cargo crates to $6m. Keep this enabled to ensure proper math on future sales",
+	SPECIALCARGOMAXSELLPRICE_DESC="Changes the sell price of your CEO's Special Cargo crates to $10m. Keep this enabled to ensure proper math on future sales",
 	OPENSCREEN="Open {1} Screen",
 	OPENSCREEN_DESC="Opens the {1} Screen",
 	--! {1} could be [TERRORBYTE] or [WAREHOUSE]
@@ -233,742 +266,6 @@ local MenuLabels = {
     SPECIALCARGOSETDELIVERTIME="Minimize Delivery Time",
     SPECIALCARGOSETDELIVERTIME_DESC="Sets the amount of time to pass before you staff will deliver, to zero",
 }
-
------------------------------------
--- String Functions
------------------------------------
---#region String Functions
-
-local function ReplacePlaceholder(str, rep, num)
-    local b, e = str:find("{"..num.."}")
-    if b and e then
-        return (str:sub(0, b-1) .. rep .. str:sub(e+1, -1))
-    else
-        util.log(string.format("Expected {%i} Placeholder in: %s", num, str))
-        return str
-    end
-end
-
----@param label string
----@param ... string|integer
----@return string
--- For future better translation support
-local function GetLabelText(label, ...)
-    -- Usage: GetLabelText("Press {1} to interact.", "E")                   -- Returns "Press E to interact."
-    -- Usage: GetLabelText("Press {1} to open {2}.", "X", "the menu")       -- Returns "Press X to open the menu."
-    -- Usage: GetLabelText("Press {2} to open {1}.", "in fullscreen", "F")  -- Returns "Press F to open in fullscreen."
-    -- Note: NUMBER OF ARGS GIVEN TO FUNCTION AND ARGS IN LABEL MUST MATCH!
-    -- Note: EMPTY ARGS OR DUPLICATE ARGS IN LABEL IS UNDEFINED BEHAVIOUR!
-    local args = {...}
-    local str = label
-    for i = 1, #args do
-        str = ReplacePlaceholder(str, args[i], i)
-    end
-    return str
-end
-
-local function GetKeyValueFromLine(line, size)
-    local find = string.find(line, "=")
-    if not find then return end
-    size = size or 2
-    local key = string.sub(line, 0, find-size)
-    local value = string.sub(line, find+size, -1)
-    return key, value
-end
-
-local function GetCharacterFromString(str, charpos)
-    --return str:sub(charpos, charpos)
-    return str[charpos]
-end
-
-local function ConvertStringToBytes(str)
-    local bytes = {}
-    for i = 1, (str:len()) do
-        bytes[i] = str:sub(i, i):byte()
-    end
-    return bytes
-end
-
-local function ConvertBytesToString(tbl)
-    local str = ""
-    for i = 1, #tbl do
-        ---@diagnostic disable-next-line: unused-function, exp-in-action, unknown-symbol
-        str ..= string.char(tbl[i])
-    end
-    return str
-end
-
-local function IsStringEqualToBytes(str, bytetable)
-    return str == ConvertBytesToString(bytetable)
-end
---#endregion String Functions
------------------------------------
--- Version Functions
------------------------------------
---#region Version Functions
-
-local function VersionStringToTable(str)
-    local result = {}
-    local s = str .. "."
-    for match in string.gmatch(s, "(.-)%.") do
-        table.insert(result, match)
-    end
-    return result
-end
-
----@param lversion string
----@param rversion string
----@param vtypes table?
----@return boolean
----@return string
--- returns true if up to date or above date, false if out of date
-local function VersionCheck(lversion, rversion, vtypes)
-    local lvtable = VersionStringToTable(lversion)
-    local rvtable = VersionStringToTable(rversion)
-    for index in ipairs(lvtable) do
-        if lvtable[index] < rvtable[index] then
-            return false, "out of date by a " .. (vtypes and vtypes[index] or index) .. " version"
-        elseif lvtable[index] > rvtable[index] then
-            break
-        end
-    end
-    return true, "is not out of date"
-end
---#endregion Version Functions
------------------------------------
--- Translation Functions
------------------------------------
---#region Translation Functions
-
----@return boolean
----@return table
-local function GetTranslationFileMetadata(path)
-    local metadata = {}
-    local file, err = io.open(path, "r")
-    if file then
-        local line = file:read("l")
-        local iter = 0
-        while GetCharacterFromString(line, 1) == "@" do
-            local key, value = GetKeyValueFromLine(line:sub(2), 1)
-            if key then
-                metadata[key] = value
-            else
-                --util.debug_log("Failure in getting key-value from line:\n"..line)
-                if not SCRIPT_SILENT_START then
-                    util.toast("Failure in reading translation file!")
-                end
-                break
-            end
-            if iter >= 10 then
-                break
-            end
-            iter = iter + 1
-            line = file:read("l")
-        end
-        file:close()
-    else
-        --util.debug_log("Failure in opening:\n"..path.."\nReason: "..(err or "unspecified"))
-        return false, metadata
-    end
-    return true, metadata
-end
-
----@param language table|string
-local function TranslateLabels(language)
-    local path
-    if type(language) == "table" then
-        path = language["path"]
-    elseif type(language) == "string" then
-        path = language
-    else
-        error("TranslateLabels was not given a valid type!")
-    end
-
-    local lvalue, rvalue
-    for line in io.lines(path) do
-        local first_char = GetCharacterFromString(line, 1)
-        if first_char == "!" or first_char == "#" or first_char == "@" then
-
-        else
-            lvalue, rvalue = GetKeyValueFromLine(line, 1)
-            if lvalue then
-                if MenuLabels[lvalue] ~= nil then
-                    MenuLabels[lvalue] = rvalue:gsub("\\n", "\n")
-                else
-                    util.toast("Error occurred while reading Translation file. Translation file may be corrupt or out of date.")
-                    --util.debug_log("Translation file attempted to assign a non-existant MenuLabel a value. $"..lvalue)
-                end
-            end
-        end
-    end
-end
-
-local Languages = {
-    [1] = {"EN - English", {"en"}, ""},
-}
-
-if not filesystem.exists(MB_TRANSLATIONS_DIR) then
-    filesystem.mkdirs(MB_TRANSLATIONS_DIR)
-end
-
-local dirlen = string.len(MB_TRANSLATIONS_DIR)
-for index, filepath in ipairs(filesystem.list_files(MB_TRANSLATIONS_DIR)) do
-    local success, metadata = GetTranslationFileMetadata(filepath)
-    local filename = filepath:sub(dirlen + 1, -5):gsub("_", " ")
-    local langcode = filepath:sub(dirlen + 1, dirlen + 2)
-    local author  = (success and metadata.Author ~= nil)  and "Author: " .. metadata.Author or "No author"
-    local version = (success and metadata.Version ~= nil) and metadata.Version or "0.0.0"
-    local uptodate, ood_msg
-
-    if success and metadata.Version ~= nil then
-        uptodate, ood_msg = VersionCheck(version, THIS_RELEASE_VERSION)
-    else
-        uptodate, ood_msg = false, "no msg"
-    end
-    
-    Languages[#Languages+1] = {
-        filename, {langcode}, author .. "\n" .. version,
-        path = filepath, version = version, uptodate = uptodate, ood_msg = ood_msg, author = author, filename = filename, langcode = langcode,
-    }
-end
-
-local SelectedLanguage
-local LanguageSelector = menu.list_action(menu.my_root(), "Language", {"mblang"}, "", Languages, function(index, name)
-    SelectedLanguage = name
-    if index ~= 1 then
-        if not Languages[index].uptodate then
-            util.toast("Translation file is out of date!")
-            util.log("Translation file is out of date!")
-        end
-        TranslateLabels(Languages[index])
-    end
-end)
-    
-while SelectedLanguage == nil do
-    util.yield()
-end
-    
-menu.delete(LanguageSelector)
---#endregion Translation Functions
-
------------------------------------
--- Generate Warning Functions
------------------------------------
-
-local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
-local ACCEPTED_WARNING = false
-while not ACCEPTED_WARNING do
-    menu.show_warning(menu_findsaferways, CLICK_MENU, MenuLabels.WARNINGRISKY_TOAST, function() ACCEPTED_WARNING = true end, function() util.stop_script() end, false)
-    util.yield()
-end
-
-
------------------------------------
--- HTTP Functions
------------------------------------
---#region HTTP Functions
-local MOTD = ""
-
-local HTTPHosts = {
-    {HOST = "gist.githubusercontent.com", PATH = "/VSussyImpostor/8cf3bf39ae47218c4ee20a9ef96871ca/raw"},
-    {HOST = "pastebin.com", PATH = "/raw/yaMG2Vz1"},
-}
-
-local HTTP = {
-    PENDING = false,
-    SUCCESS = false,
-    TRIES = 0,
-    HOST = HTTPHosts[1].HOST,
-    PATH = HTTPHosts[1].PATH,
-    HOST_NUMBER = 1,
-    SUCCESS_WAIT_TIME = (90 * 1000), -- 1 minute, 30 seconds
-    GIVEUP_TIME = (30 * 1000), -- 30 seconds
-    WAIT_TIME = (3 * 1000), -- 3 seconds
-    FAILSAFE = false,
-}
-
-local remote = {
-    motd = "",
-    version = "",
-    killswitches = {
-        ["safeloop"] = false,
-        ["specialcargo"] = false,
-        ["maxsellprice"] = false,
-        ["autocomplete"] = false,
-    },
-}
-
-local function StringToBoolean(str)
-    return str == "true"
-end
-
-local function LinesToTable(lines)
-    local result = {}
-    for s in lines:gmatch("[^\r\n]+") do
-        table.insert(result, s)
-    end
-    return result
-end
-
-local function IsKeyKillswitch(key)
-    return key:startswith("killswitch_")
-end
-
-local function GetKillswitchFromKey(key)
-    -- 12 is the length of "killswitch_"
-    return string.sub(key, 12, -1)
-end
-
-local function ActivateFailsafe()
-    if not HTTP.FAILSAFE then
-        util.toast(MenuLabels.HTTPFAILSAFE .. " (HTTP E3)")
-        for name, value in pairs(remote.killswitches) do
-            remote.killswitches[name] = true
-        end
-        HTTP.FAILSAFE = true -- in order to avoid this toast multiple times
-    end
-end
-
-local function HandleHTTPResponse(response)
-    for index, line in ipairs(LinesToTable(response)) do
-        local key, value = GetKeyValueFromLine(line)
-        if not key or not value then
-            util.toast(MenuLabels.HTTPINVALID .. " (HTTP E2)")
-            HTTP.SUCCESS = false -- don't immmediately trigger failsafe, treat this as a failed request
-            return -- jump out of handling, try again
-        end
-        if --[[IS_RELEASE_VERSION and]] IsKeyKillswitch(key) then
-            remote.killswitches[GetKillswitchFromKey(key)] = StringToBoolean(value)
-        else
-            remote[key] = string.sub(value, 2, -2) -- drop the quotes
-        end
-    end
-
-    HTTP.FAILSAFE = false -- reset failsafe if it triggered before
-
-    if not IGNORE_VERSION_DIFFERENCE and IS_RELEASE_VERSION and not VersionCheck(THIS_RELEASE_VERSION, remote.version) then
-        util.toast(MenuLabels.SCRIPTOUTOFDATE, TOAST_ALL)
-    end
-
-    if MOTD ~= remote.motd then
-        util.toast(GetLabelText(MenuLabels.PREFIX_MOTD, remote.motd), TOAST_ALL) -- yeah i cant really think of a good way to only show this only after the script is "started". and a script "start" is a loose term here, so im going to base it on clicking the start button and thats it. any further input made by the user then causes those toasts to appear.
-        MOTD = remote.motd
-    end
-end
-
-local function HTTPGiveUp()
-    util.toast(MenuLabels.HTTPGIVEUP .. " (HTTP E1)", TOAST_ALL)
-    ActivateFailsafe()
-end
-
-local function HTTPSwitchHost()
-    HTTP.HOST_NUMBER = HTTP.HOST_NUMBER == #HTTPHosts and 1 or HTTP.HOST_NUMBER + 1
-    HTTP.HOST = HTTPHosts[HTTP.HOST_NUMBER].HOST
-    HTTP.PATH = HTTPHosts[HTTP.HOST_NUMBER].PATH
-end
-
-local function HTTPFail()
-    -- if not IS_RELEASE_VERSION then
-    --     util.toast("HTTP Attempt Failed.", TOAST_ALL)
-    -- end
-    HTTP.PENDING = false
-    HTTP.SUCCESS = false
-    HTTP.TRIES = HTTP.TRIES + 1
-end
-
-local function HTTPSuccess(response)
-    -- if not IS_RELEASE_VERSION then
-    --     util.toast("HTTP Attempt Succeeded.", TOAST_ALL)
-    -- end
-    HTTP.PENDING = false
-    HTTP.SUCCESS = true
-    HandleHTTPResponse(response)
-end
-
-local function HTTPTry()
-    while HTTP.PENDING do -- prevent two http requests at once
-        util.yield()
-    end
-    HTTP.PENDING = true
-    async_http.init(HTTP.HOST, HTTP.PATH, HTTPSuccess, HTTPFail)
-    async_http.dispatch()
-    while HTTP.PENDING do
-        util.yield()
-    end
-    return HTTP.SUCCESS
-end
-
-local function HTTPHeartbeat()
-    HTTPTry()
-    if HTTP.SUCCESS then
-        util.yield(HTTP.SUCCESS_WAIT_TIME)
-    elseif HTTP.TRIES == 1 then
-        util.yield(HTTP.WAIT_TIME)
-    elseif HTTP.TRIES == 2 then
-        util.yield(HTTP.WAIT_TIME)
-        HTTPSwitchHost()
-    elseif HTTP.TRIES == 3 then
-        util.yield(HTTP.WAIT_TIME)
-    elseif HTTP.TRIES >= 4 then -- Forcing an HTTP connection will increment the count, so we do >= to account for that case
-        -- Our connection is fucked, give up
-        HTTPGiveUp()
-        util.yield(HTTP.GIVEUP_TIME)
-        HTTP.TRIES = 0
-    end
-end
-
-local loading_divider = menu.divider(menu.my_root(), MenuLabels.RETREIVINGINFO)
-util.create_tick_handler(HTTPHeartbeat)
-
-while not HTTP.SUCCESS and HTTP.TRIES < 4 do
-    util.yield()
-end
-
-menu.delete(loading_divider)
---#endregion HTTP Functions
-
------------------------------------
--- Custom Command Functions
------------------------------------
---#region Custom Command Functions
-
-local function RegisterUpdatingReadOnlyCommand(list, title, value_func)
-    local command = menu.readonly(list, title, value_func())
-    local handler = menu.on_tick_in_viewport(command, function() 
-        menu.set_value(command, value_func())
-    end)
-    return command, handler
-end
-
-local function RegisterUpdatingListCommand(list, title, help_text_func)
-    local command = menu.list(list, title, {}, help_text_func())
-    local handler = menu.on_tick_in_viewport(command, function()
-        menu.set_help_text(command, help_text_func())
-    end)
-    return command, handler
-end
---#endregion Custom Command Functions
-
------------------------------------
--- Basic Functions
------------------------------------
---#region Basic Functions
-
-local function SetBits(int, ...)
-    local bits = {...}
-    for ind, bit in ipairs(bits) do
-        int = int | (1 << bit)
-    end
-    return int
-end
-
-local function ClearBits(int, ...)
-    local bits = {...}
-    for ind, bit in ipairs(bits) do
-        int = int & ~(1 << bit)
-    end
-    return int
-end
-
-local function IsBitSet(int, offset)
-    return ((int >> offset) & 1) == 1
-end
-
-local function IntToBitString(int)
-    local bits = {}
-    for i = 0, 31 do
-        bits[31 - i] = IsBitSet(int, i) and 1 or 0
-    end
-    return table.concat(bits, "", 0)
-end
-
-local prefix = "MP" .. util.get_char_slot() .. "_"
-local stat_ptr = memory.alloc(4)
----@return integer|nil
-local function GetStatInt(stat)
-    if STATS.STAT_GET_INT(util.joaat(stat), stat_ptr, -1) then
-        return memory.read_int(stat_ptr)
-    else
-        --util.debug_log("Failed to get stat " .. stat)
-    end
-    return nil
-end
-
-local function SetStatInt(stat, value)
-    if STATS.STAT_SET_INT(util.joaat(stat), value, true) then
-        return true
-    else
-        --util.debug_log("Failed to set stat "..stat.." to "..value)
-    end
-    return false
-end
-
-local function GetGlobalInt(address)
-    return memory.read_int(memory.script_global(address))
-end
-
-local function GetGlobalFloat(address)
-    return memory.read_float(memory.script_global(address))
-end
-
-local function SetGlobalInt(address, value)
-    memory.write_int(memory.script_global(address), value)
-end
-
-local function SetGlobalFloat(address, value)
-    memory.write_float(memory.script_global(address), value)
-end
-
-local function SetGlobalBits(address, ...)
-    local value = GetGlobalInt(address)
-    if value then
-        return SetGlobalInt(address, SetBits(value, ...))
-    end
-end
-
-local function GetLocalInt(script_str, script_local)
-    local addr = memory.script_local(script_str, script_local)
-    return addr ~= 0 and memory.read_int(addr) or nil
-end
-
-local function GetLocalFloat(script_str, script_local)
-    local addr = memory.script_local(script_str, script_local)
-    return addr ~= 0 and memory.read_float(addr) or nil
-end
-
-local function GetLocalString(script_str, script_local)
-    local addr = memory.script_local(script_str, script_local)
-    return addr ~= 0 and memory.read_string(addr) or nil
-end
-
-local function ClearGlobalBits(address, ...)
-    local value = GetGlobalInt(address)
-    if value then
-        return SetGlobalInt(address, ClearBits(value, ...))
-    end
-end
-
-local function SetLocalInt(script_str, script_local, value)
-    local addr = memory.script_local(script_str, script_local)
-    if addr ~= 0 then
-        memory.write_int(addr, value)
-    end
-    return addr ~= 0
-end
-
-local function SetLocalFloat(script_str, script_local, value)
-    local addr = memory.script_local(script_str, script_local)
-    if addr ~= 0 then
-        memory.write_float(addr, value)
-    end
-    return addr ~= 0
-end
-
-local function SetLocalString(script_str, script_local, value)
-    local addr = memory.script_local(script_str, script_local)
-    if addr ~= 0 then
-        memory.write_string(addr, value)
-    end
-    return addr ~= 0
-end
-
-local function SetLocalBits(script_str, script_local, ...)
-    local value = GetLocalInt(script_str, script_local)
-    if value then
-        return SetLocalInt(script_str, script_local, SetBits(value, ...))
-    end
-end
-
-local function ClearLocalBits(script_str, script_local, ...)
-    local value = GetLocalInt(script_str, script_local)
-    if value then
-        return SetLocalInt(script_str, script_local, ClearBits(value, ...))
-    end
-end
-
-local function IsScriptRunning(str)
-    return SCRIPT._GET_NUMBER_OF_REFERENCES_OF_SCRIPT_WITH_NAME_HASH(util.joaat(str)) > 0
-end
-
-local function StartScript(str, arg_count)
-    if not SCRIPT.DOES_SCRIPT_EXIST(str) then
-        return false
-    end
-    if IsScriptRunning(str) then
-        return true
-    end
-    SCRIPT.REQUEST_SCRIPT(str)
-    while not SCRIPT.HAS_SCRIPT_LOADED(str) do
-        util.yield()
-    end
-    SYSTEM.START_NEW_SCRIPT(str, arg_count or 0)
-    SCRIPT.SET_SCRIPT_AS_NO_LONGER_NEEDED(str)
-    return true
-end
-
-local function IsInSession()
-    return util.is_session_started() and not util.is_session_transition_active()
-end
-
-local function PressEnterOnScaleform()
-    PAD._SET_CONTROL_NORMAL(2, 201, 1)
-    util.yield()
-    PAD._SET_CONTROL_NORMAL(2, 201, 0)
-end
-
-local function SetEntityCoords(entity, coords)
-    ENTITY.SET_ENTITY_COORDS_NO_OFFSET(entity, coords.x, coords.y, coords.z, false, false, false)
-end
-
-local function LoadArea(coords)
-    local has_ground, ground_z = util.get_ground_z(coords.x, coords.y, coords.z)
-    if not has_ground then
-        local rot = CAM.GET_FINAL_RENDERED_CAM_ROT(2)
-        local cam = CAM.CREATE_CAM_WITH_PARAMS("DEFAULT_SCRIPTED_CAMERA", coords.x, coords.y, coords.z+2, rot.x, rot.y, rot.z, CAM.GET_FINAL_RENDERED_CAM_FOV(), true, 2)
-        CAM.SET_CAM_ACTIVE(cam, true)
-        CAM.RENDER_SCRIPT_CAMS(true, false, 0, false, false, 0)
-        local count = 0
-        local max = 500
-        while not has_ground and count < max do
-            has_ground, ground_z = util.get_ground_z(coords.x, coords.y, coords.z+count)
-            count = count + 1
-            util.yield()
-        end
-        CAM.RENDER_SCRIPT_CAMS(false, false, 0, false, false, 0)
-        CAM.SET_CAM_ACTIVE(cam, false)
-        CAM.DESTROY_CAM(cam, false)
-        return max > count
-    end
-    return true
-end
-
-local TotalEarnedTypes = {
-    --type   = {prefix = label, amount = 0}
-    safeloop = {prefix = MenuLabels.PREFIX_SAFELOOP, amount = 0},           -- Do not use GetLabelText in here, these are prefixes and will be converted later
-    specialcargo = {prefix = MenuLabels.PREFIX_SPECIALCARGO, amount = 0},   -- Do not use GetLabelText in here, these are prefixes and will be converted later
-}
-
-local function AddToTotalEarned(amount, type)
-    type.amount = type.amount + amount
-    local str = type and GetLabelText(type.prefix, GetLabelText(MenuLabels.PREFIX_TOTALEARNED, type.amount)) or GetLabelText(MenuLabels.PREFIX_TOTALEARNED, type.amount)
-    util.toast(str, TOAST_ABOVE_MAP | TOAST_LOGGER)
-end
---#endregion Basic Functions
-
------------------------------------
--- Global Functions
------------------------------------
---#region Global Functions
-
-local function GetOrgOffset()
-    return (1892703 + 1 + (players.user() * 599) + 10)
-end
-
-local function IsInOrg()
-    return GetGlobalInt(GetOrgOffset()) ~= -1
-end
-
-local function GetOrgType()
-    -- Returns -1, 0, 1. None, CEO, MC. This will only work if you are the boss of the org
-    return GetGlobalInt(GetOrgOffset() + 428)
-end
-
-local function RegisterAsCEO()
-    if IsInSession() then
-        if not IsInOrg() then
-            SetGlobalInt(GetOrgOffset(), players.user()) -- Set self as boss
-            SetGlobalInt(GetOrgOffset() + 428, 0) -- Set type to CEO
-        end
-    end
-end
-
--- Business / Other Online Work Stuff
-local function GetOnlineWorkOffset()
-    return (1853348 + 1 + (players.user() * 834) + 267) -- 1853131    888) + 267)
-end
-
-local function GetNightClubHubOffset()
-    return (GetOnlineWorkOffset() + 295) -- 291
-end
-
-local function GetNightClubOffset()
-    return (GetOnlineWorkOffset() + 336) -- 332
-end
-
-local function GetWarehouseOffset()
-    return (GetOnlineWorkOffset() + 114) + 1 -- 110
-end
-
-local function GetMCBusinessOffset()
-    return (GetOnlineWorkOffset() + 191) + 1 -- 187
-end
-
--- Nightclub
-local function GetHubValueOffsetFromSlot(slot) -- This returns the address, not the value
-    return (GetNightClubHubOffset() + 8 + 1) + slot -- no change
-end
-
-local function GetHubValueFromSlot(slot)
-    return GetGlobalInt(GetHubValueOffsetFromSlot(slot))
-end
-
-local function SetHubValueFromSlot(slot, value)
-    SetGlobalInt(GetHubValueOffsetFromSlot(slot), value)
-end
-
-local function GetHubProductOfTypeFromStat(id)
-    return GetStatInt(prefix .. ConvertBytesToString{72, 85, 66, 95, 80, 82, 79, 68, 95, 84, 79, 84, 65, 76, 95} .. id)
-    --return GetStatInt(prefix .. --"HUB_PROD_TOTAL_" .. id
-end
-
-local function GetSafeCashValueFromStat()
-    return GetStatInt(prefix .. ConvertBytesToString{67, 76, 85, 66, 95, 83, 65, 70, 69, 95, 67, 65, 83, 72, 95, 86, 65, 76, 85, 69})
-    --return GetStatInt(prefix .. "CLUB_SAFE_CASH_VALUE")
-end
-
-local function GetNightClubPropertyID()
-    return GetGlobalInt(GetNightClubOffset())
-end
-
--- MC Businesses
-local function GetMCBusinessDataOffset(slot)
-    return GetMCBusinessOffset() + (slot * 13) -- no change
-end
-
-local function GetMCBusinessProductionSpeed2(slot)
-    return GetMCBusinessDataOffset(slot) + 9 -- no change
-end
-
-local function GetBusinessSuppliesFromStat(slot)
-    return GetStatInt(prefix .. ConvertBytesToString{77, 65, 84, 84, 79, 84, 65, 76, 70, 79, 82, 70, 65, 67, 84, 79, 82, 89} .. slot)
-    --return GetStatInt(prefix .. "MATTOTALFORFACTORY" .. slot)
-end
-
-local function GetBusinessProductFromStat(slot)
-    return GetStatInt(prefix .. ConvertBytesToString{80, 82, 79, 68, 84, 79, 84, 65, 76, 70, 79, 82, 70, 65, 67, 84, 79, 82, 89} .. slot)
-    --return GetStatInt(prefix .. "PRODTOTALFORFACTORY" .. slot)
-end
-
-local function GetBunkerResearchFromStat()
-    return GetStatInt(prefix .. ConvertBytesToString{82, 69, 83, 69, 65, 82, 67, 72, 84, 79, 84, 65, 76, 70, 79, 82, 70, 65, 67, 84, 79, 82, 89, 53})
-    --return GetStatInt(prefix .. "RESEARCHTOTALFORFACTORY5")
-end
-
-local function GetMCBusinessEquipmentUpgradeStatusFromStat(slot)
-    return GetStatInt(prefix .. ConvertBytesToString{70, 65, 67, 84, 79, 82, 89, 85, 80, 71, 82, 65, 68, 69, 83} .. slot)
-    --return GetStatInt(prefix .. "FACTORYUPGRADES" .. slot)
-end
-
-local function GetMCBusinessStaffUpgradeStatusFromStat(slot)
-    return GetStatInt(prefix .. ConvertBytesToString{70, 65, 67, 84, 79, 82, 89, 85, 80, 71, 82, 65, 68, 69, 83} .. slot .. "_1")
-    --return GetStatInt(prefix .. "FACTORYUPGRADES" .. slot .. "_1")
-end
-
--- Special Cargo
-local function GetSpecialCargoCrateAmount(warehouse)
-    return GetGlobalInt(GetWarehouseOffset() + (warehouse * 3) + 1) -- no change
-end
---#endregion Global Functions
 
 local MCBusinessPropertyInfo = {
     [1]  = {name = "Paleto Bay Meth Lab",                      coords = {x = 52.903,     y =  6338.585,  z = 31.35  }, type = 3},  -- "MP_BWH_METH_1",
@@ -1088,11 +385,11 @@ local MyBusinesses = {
 }
 
 local MenuCurrentWarehouses = {
-    [0] = {"Name", {"command"}, "Help Text"},
-    [1] = {"Name", {"command"}, "Help Text"},
-    [2] = {"Name", {"command"}, "Help Text"},
-    [3] = {"Name", {"command"}, "Help Text"},
-    [4] = {"Name", {"command"}, "Help Text"},
+    [0] = {"Name", {}, ""},
+    [1] = {"Name", {}, ""},
+    [2] = {"Name", {}, ""},
+    [3] = {"Name", {}, ""},
+    [4] = {"Name", {}, ""},
 }
 
 local Selected_Warehouse = 0
@@ -1115,11 +412,11 @@ local globals = {
         },
 
         Weapons = {
-            Sell                = tunables_global+24409, -- 24409 was 24150
+            Sell                = tunables_global+24409, -- was 24150
             SellDefaultValue    = 5000,
-            ProSpd              = tunables_global+24394, -- 24394 was 24135
+            ProSpd              = tunables_global+24394, -- was 24135
             ProSpdDefaultValue  = 4800000,
-            Cap                 = tunables_global+24416, -- 24416 was 24157
+            Cap                 = tunables_global+24416, -- was 24157
             CapDefaultValue     = 100,
         },
 
@@ -1133,11 +430,11 @@ local globals = {
         },
 
         Meth = {
-            Sell                = tunables_global+24411, -- 24411 was 24152
+            Sell                = tunables_global+24411, -- was 24152
             SellDefaultValue    = 11475,
-            ProSpd              = tunables_global+24396, -- 24396 was 24137
+            ProSpd              = tunables_global+24396, -- was 24137
             ProSpdDefaultValue  = 7200000,
-            Cap                 = tunables_global+24418, -- 24418 was 24159
+            Cap                 = tunables_global+24418, -- was 24159
             CapDefaultValue     = 20,
         },
 
@@ -1151,20 +448,20 @@ local globals = {
         },
 
         Forgery = {
-            Sell                = tunables_global+24413, -- 24413 was 24154
+            Sell                = tunables_global+24413, -- was 24154
             SellDefaultValue    = 1350,
-            ProSpd              = tunables_global+24398, -- 24398 was 24139
+            ProSpd              = tunables_global+24398, -- was 24139
             ProSpdDefaultValue  = 1800000,
-            Cap                 = tunables_global+24420, -- 24420 was 24161
+            Cap                 = tunables_global+24420, -- was 24161
             CapDefaultValue     = 60,
         },
 
         Cash = {
-            Sell                = tunables_global+24414, -- 24414 was 24155
+            Sell                = tunables_global+24414, -- was 24155
             SellDefaultValue    = 4725,
-            ProSpd              = tunables_global+24399, -- 24399 was 24140
+            ProSpd              = tunables_global+24399, -- was 24140
             ProSpdDefaultValue  = 3600000,
-            Cap                 = tunables_global+24421, -- 24421 was 24162
+            Cap                 = tunables_global+24421, -- was 24162
             CapDefaultValue     = 40,
         },
     },
@@ -1173,130 +470,130 @@ local globals = {
         MaxSellPrice = 2000000,
 
         Forgery = {
-            Sell1               = tunables_global+17471, -- 17471 was 17223
+            Sell1               = tunables_global+17471, -- was 17223
             Sell1DefaultValue   = 1350,
-            Sell2               = tunables_global+19112, -- 19112 was 18862
+            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17449, -- 17449 was 17201
+            ProSpd1             = tunables_global+17449, -- was 17201
             ProSpd1DefaultValue = 300000,
             ProSpd2DefaultValue = 300000,
-            Ratio1              = tunables_global+17461, -- 17461 was 17213
+            Ratio1              = tunables_global+17461, -- was 17213
             Ratio1DefaultValue  = 4,
-            Ratio2              = tunables_global+17466, -- 17466 was 17218
+            Ratio2              = tunables_global+17466, -- was 17218
             Ratio2DefaultValue  = 2,
-            Cap                 = tunables_global+18980, -- 18980 was 18730
+            Cap                 = tunables_global+18980, -- was 18730
             CapDefaultValue     = 60,
         },
 
         Cash = {
-            Sell1               = tunables_global+17472, -- 17472 was 17224
+            Sell1               = tunables_global+17472, -- was 17224
             Sell1DefaultValue   = 4725,
-            Sell2               = tunables_global+19112, -- 19112 was 18862
+            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17450, -- 17450 was 17202
+            ProSpd1             = tunables_global+17450, -- was 17202
             ProSpd1DefaultValue = 720000,
             ProSpd2DefaultValue = 720000,
-            Ratio1              = tunables_global+17462, -- 17462 was 17214
+            Ratio1              = tunables_global+17462, -- was 17214
             Ratio1DefaultValue  = 10,
-            Ratio2              = tunables_global+17467, -- 17467 was 17219
+            Ratio2              = tunables_global+17467, -- was 17219
             Ratio2DefaultValue  = 5,
-            Cap                 = tunables_global+18988, -- 18988 was 18738
+            Cap                 = tunables_global+18988, -- was 18738
             CapDefaultValue     = 40,
         },
 
         Cocaine = {
-            Sell1               = tunables_global+17473, -- 17473 was 17225
+            Sell1               = tunables_global+17473, -- was 17225
             Sell1DefaultValue   = 27000,
-            Sell2               = tunables_global+19112, -- 19112 was 18862
+            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17448, -- 17448 was 17200
+            ProSpd1             = tunables_global+17448, -- was 17200
             ProSpd1DefaultValue = 3000000,
             ProSpd2DefaultValue = 3000000,
-            Ratio1              = tunables_global+17463, -- 17463 was 17215
+            Ratio1              = tunables_global+17463, -- was 17215
             Ratio1DefaultValue  = 50,
-            Ratio2              = tunables_global+17468, -- 17468 was 17220
+            Ratio2              = tunables_global+17468, -- was 17220
             Ratio2DefaultValue  = 25,
-            Cap                 = tunables_global+18972, -- 18972 was 18722
+            Cap                 = tunables_global+18972, -- was 18722
             CapDefaultValue     = 10,
         },
 
         Meth = {
-            Sell1               = tunables_global+17474, -- 17474 was 17226
+            Sell1               = tunables_global+17474, -- was 17226
             Sell1DefaultValue   = 11475,
-            Sell2               = tunables_global+19112, -- 19112 was 18862
+            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17447, -- 17447 was 17199
+            ProSpd1             = tunables_global+17447, -- was 17199
             ProSpd1DefaultValue = 1800000,
             ProSpd2DefaultValue = 1800000,
-            Ratio1              = tunables_global+17464, -- 17464 was 17216
+            Ratio1              = tunables_global+17464, -- was 17216
             Ratio1DefaultValue  = 24,
-            Ratio2              = tunables_global+17469, -- 17469 was 17221
+            Ratio2              = tunables_global+17469, -- was 17221
             Ratio2DefaultValue  = 12,
-            Cap                 = tunables_global+18964, -- 18964 was 18714
+            Cap                 = tunables_global+18964, -- was 18714
             CapDefaultValue     = 20,
         },
 
         Weed = {
-            Sell1               = tunables_global+17475, -- 17475 was 17227
+            Sell1               = tunables_global+17475, -- was 17227
             Sell1DefaultValue   = 2025,
-            Sell2               = tunables_global+19112, -- 19112 was 18862
+            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17446, -- 17446 was 17198
+            ProSpd1             = tunables_global+17446, -- was 17198
             ProSpd1DefaultValue = 360000,
             ProSpd2DefaultValue = 360000,
-            Ratio1              = tunables_global+17465, -- 17465 was 17217
+            Ratio1              = tunables_global+17465, -- was 17217
             Ratio1DefaultValue  = 4,
-            Ratio2              = tunables_global+17470, -- 17470 was 17222
+            Ratio2              = tunables_global+17470, -- was 17222
             Ratio2DefaultValue  = 2,
-            Cap                 = tunables_global+18956, -- 18956 was 18706
+            Cap                 = tunables_global+18956, -- was 18706
             CapDefaultValue     = 80,
         },
 
         Bunker = {
-            Sell1 = tunables_global+21581, -- 21581 was 21329
+            Sell1 = tunables_global+21581, -- was 21329
             Sell1DefaultValue = 5000,
-            Sell2 = tunables_global+21554, -- 21554 was 21304
+            Sell2 = tunables_global+21554, -- was 21304
             Sell2DefaultValue = 1.5,
-            ProSpd1 = tunables_global+21576, -- 21576 was 21324 -- base
+            ProSpd1 = tunables_global+21576, -- was 21324 -- base
             ProSpd1DefaultValue = 600000,
-            ProSpd2 = tunables_global+21577, -- 21577 was 21325 -- equipment
+            ProSpd2 = tunables_global+21577, -- was 21325 -- equipment
             ProSpd2DefaultValue = 90000,
-            ProSpd3 = tunables_global+21578, -- 21578 was 21326 -- staff upg
+            ProSpd3 = tunables_global+21578, -- was 21326 -- staff upg
             ProSpd3DefaultValue = 90000,
-            Ratio1 = tunables_global+21327, -- 21579 was 21327 -- no upgrade
+            Ratio1 = tunables_global+21327, -- was 21327 -- no upgrade
             Ratio1DefaultValue = 10,
-            Ratio2 = tunables_global+21328, -- 21580 was 21328 -- with upgrade
+            Ratio2 = tunables_global+21328, -- was 21328 -- with upgrade
             Ratio2DefaultValue = 5,
-            Cap = tunables_global+21575, -- 21575 was 21323
+            Cap = tunables_global+21575, -- was 21323
             CapDefaultValue = 100,
         },
     },
 
-    SafeCap           = tunables_global+24073, -- 24073 was 23814 -- 250000, which is interesting because its actually set to 210k :thonk: 
-    SafeRevenue       = tunables_global+24049, -- 24050 was 23790 keep in mind theres 20 different ones, this is just the first
+    SafeCap           = tunables_global+24073, -- was 23814 -- 250000, which is interesting because its actually set to 210k :thonk: 
+    SafeRevenue       = tunables_global+24049, -- was 23790 keep in mind theres 20 different ones, this is just the first
     SafeLimit         = 300000,
-    SafeStatus1       = 1640759, -- 1640759 was 1637063
-    SafeStatus2       = 2787714, -- 2787714 was 2783521
+    SafeStatus1       = 1640759, -- was 1637063
+    SafeStatus2       = 2787714, -- was 2783521
 
-    MCSupplyDelay   = tunables_global+18999, -- 600 -- 18999 was 18749
+    MCSupplyDelay   = tunables_global+18999, -- 600 -- was 18749
     MCSupplyTime    = 1640642+1, -- not a tunable, found in freemode.c func_16618. Now found in func_16968. was 1636946+1
     BunkSupplyDelay = tunables_global+21349, -- 600
 
-    ---@diagnostic disable-next-line: malformed-number
-    SpecialCargoMaxSellPriceValue   = 10_000_000,
-    SpecialCargoBypassBuyCooldown   = tunables_global+15608, -- 300000  -- 15608 was 15361
-    SpecialCargoBypassSellCooldown  = tunables_global+15609, -- 1800000  -- 15609 was 15362
-    SpecialCargoCrateMaxThreshold   = tunables_global+15842, -- 111 -- 15842 was 15595
-    SpecialCargoRewardPerCrate      = tunables_global+15863, -- 20000 -- 15863 was 15616
-    SpecialCargoCrateMultiplier3    = tunables_global+16708, -- 100 -- 16708 was 16460
-    SpecialCargoCrateMultiplier2    = tunables_global+16709, -- 50 -- 16709 was 16461
-    SpecialCargoCrateMultiplier1    = tunables_global+16710, -- 20 -- 16710 was 16462
-    SpecialCargoBonus               = tunables_global+15635, -- 9000 -- 15635 was 15388
+    SpecialCargoMaxSellPriceValue   = 10000000,
+    SpecialCargoBypassBuyCooldown   = tunables_global+15608, -- 300000  -- was 15361
+    SpecialCargoBypassSellCooldown  = tunables_global+15609, -- 1800000 -- was 15362
+    SpecialCargoCrateMaxThreshold   = tunables_global+15842, -- 111     -- was 15595
+    SpecialCargoRewardPerCrate      = tunables_global+15863, -- 20000   -- was 15616
+    SpecialCargoCrateMultiplier3    = tunables_global+16708, -- 100     -- was 16460
+    SpecialCargoCrateMultiplier2    = tunables_global+16709, -- 50      -- was 16461
+    SpecialCargoCrateMultiplier1    = tunables_global+16710, -- 20      -- was 16462
+    SpecialCargoBonus               = tunables_global+15635, -- 9000    -- was 15388
 
+    SpecialCargoSellFuncSomething   = 1946098, -- was 1946785
     SpecialCargoDeliveryTime        = tunables_global+32537,
     SpecialCargoDeliveryCrates      = 1888846+12,
 
-    IsUsingComputerScreen = 75485, -- 75485 was 75027
+    IsUsingComputerScreen = 75485, -- was 75027
 }
 
 local locals = {
@@ -1306,21 +603,21 @@ local locals = {
     --appsecuroserv
     SpecialCargoSecuroString = "appsecuroserv",
     SpecialCargoSecuroArgs = 4592, -- not a local, just the arg count needed to properly start the script
-    SpecialCargoCurrentProperty = 730, -- warehouse property id (non-global-index based)) -- now 730 was 795
-    SpecialCargoScreenStatus = 553, -- status: 3011 = sold? 1 = error, 3012 = confirm? -- now 553 was 618
-    SpecialCargoCratesToSell = 734, -- now 734 was 799
-    SpecialCargoSellFromOption = 735, -- (not current property id, but buttons [1-3]) -- now 735 was 800
-    SpecialCargoCurrentBitset = 554, -- bit 13 controls if it is warehouse or securoserv -- now 554 was 619
-    SpecialCargoStartingPosX = 751, --float  (if distance to this from self is greater than 5f to this local, kill script) -- now 751 was 816
-    SpecialCargoStartingPosY = 752, --float  (if distance to this from self is greater than 5f to this local, kill script) -- now 752 was 816
-    SpecialCargoStartingPosZ = 753, --float  (if distance to this from self is greater than 5f to this local, kill script) -- now 753 was 816
+    SpecialCargoCurrentProperty = 730, -- warehouse property id (non-global-index based)) -- was 795
+    SpecialCargoScreenStatus = 553, -- status: 3011 = sold? 1 = error, 3012 = confirm? -- was 618
+    SpecialCargoCratesToSell = 734, -- was 799
+    SpecialCargoSellFromOption = 735, -- (not current property id, but buttons [1-3]) -- was 800
+    SpecialCargoCurrentBitset = 554, -- bit 13 controls if it is warehouse or securoserv -- was 619
+    SpecialCargoStartingPosX = 751, -- float  (if distance to this from self is greater than 5f to this local, kill script) -- was 816
+    SpecialCargoStartingPosY = 752, -- float  (if distance to this from self is greater than 5f to this local, kill script) -- was 817?
+    SpecialCargoStartingPosZ = 753, -- float  (if distance to this from self is greater than 5f to this local, kill script) -- was 818?
 
     --gb_contraband_sell
     SpecialCargoSellString = "gb_contraband_sell",
-    SpecialCargoSellType = 538+582, -- 536+582
-    SpecialCargoSellSubType = 538+7, -- 536+7
-    SpecialCargoSellAmount = 538+56, -- 536+56
-    SpecialCargoSellStatus = 538+582, -- 536+582
+    SpecialCargoSellType = 538+582,
+    SpecialCargoSellSubType = 538+7,
+    SpecialCargoSellAmount = 538+56,
+    SpecialCargoSellStatus = 538+582,
 
     --gb_contraband_buy
     SpecialCargoBuyString = "gb_contraband_buy",
@@ -1331,7 +628,7 @@ local locals = {
 
     --appHackerTruck
     SpecialCargoBuyScreenString = "appHackerTruck",
-    SpecialCargoBuyScreenArgs = 4592, -- outdated
+    SpecialCargoBuyScreenArgs = 4592, -- outdated?
     SpecialCargoBuyScreenHasSelectedJobCategory = 305+1, -- outdated
     SpecialCargoBuyScreenCurrentPrompt = 115,  -- outdated
     SpecialCargoBuyScreenCurrentCategory = 116, -- outdated
@@ -1344,8 +641,8 @@ local locals = {
     -- NightClub
     ----------------
     NCSafeScriptString = "freemode",
-    NCSafeTransactionStatus = 19195+1, -- now 19195+1 was 18992+1
-    NCSafeAddMoneyAmount = 19195+2, -- now 19195+2 was 18992+2
+    NCSafeTransactionStatus = 19195+1, -- was 18992+1
+    NCSafeAddMoneyAmount = 19195+2, -- was 18992+2
     NCSellMissionCooldown = 114, -- a bitset
     NCSellMissionCooldownBit = 27,
 
@@ -1359,6 +656,7 @@ local locals = {
     -- MC
     ----------------
     MCSellScriptString = "gb_biker_contraband_sell",
+    MCEZMissionStarted = 696+122,
     MCEZMission = 696+17,
 
     MCLaptopString = "appbikerbusiness",
@@ -1373,16 +671,767 @@ local locals = {
     BunkTimeTakenToDeliver = (1199 + 579), -- outdated
 }
 
+local TotalEarnedTypes = {
+    --type   = {prefix = label, amount = 0}
+    -- Do not use GetLabelText in here, these are prefixes and will be converted later
+    safeloop = {prefix = MenuLabels.PREFIX_SAFELOOP, amount = 0},   
+    specialcargo = {prefix = MenuLabels.PREFIX_SPECIALCARGO, amount = 0},
+}
+
 local I32_MAX = 2147483647
+
+-----------------------------------
+-- String Functions
+-----------------------------------
+--#region String Functions
+
+local function ReplacePlaceholder(str, rep, num)
+    local b, e = str:find("{"..num.."}")
+    if b and e then
+        return (str:sub(0, b-1) .. rep .. str:sub(e+1, -1))
+    else
+        util.log(string.format("Expected {%i} Placeholder in: %s", num, str))
+        return str
+    end
+end
+
+---@param label string
+---@param ... string|integer
+---@return string
+local function GetLabelText(label, ...)
+    -- Usage: GetLabelText("Press {1} to interact.", "E")                   -- Returns "Press E to interact."
+    -- Usage: GetLabelText("Press {1} to open {2}.", "X", "the menu")       -- Returns "Press X to open the menu."
+    -- Usage: GetLabelText("Press {2} to open {1}.", "in fullscreen", "F")  -- Returns "Press F to open in fullscreen."
+    -- Note: NUMBER OF ARGS GIVEN TO FUNCTION AND ARGS IN LABEL MUST MATCH!
+    -- Note: EMPTY ARGS OR DUPLICATE ARGS IN LABEL IS UNDEFINED BEHAVIOUR!
+    local args = {...}
+    local str = label
+    for i = 1, #args do
+        str = ReplacePlaceholder(str, args[i], i)
+    end
+    return str
+end
+
+local function GetKeyValueFromLine(line, size)
+    local find = string.find(line, "=")
+    if not find then return end
+    size = size or 2
+    local key = string.sub(line, 0, find-size)
+    local value = string.sub(line, find+size, -1)
+    return key, value
+end
+
+local function GetCharacterFromString(str, charpos)
+    return str:sub(charpos, charpos)
+    --return str[charpos] -- pluto only
+end
+--#endregion String Functions
+
+-----------------------------------
+-- Version Functions
+-----------------------------------
+--#region Version Functions
+
+local function VersionStringToTable(str)
+    local result = {}
+    local s = str .. "."
+    for match in string.gmatch(s, "(.-)%.") do
+        table.insert(result, match)
+    end
+    return result
+end
+
+---@param lversion string
+---@param rversion string
+---@param vtypes table?
+---@return boolean
+---@return string
+-- returns true if up to date or above date, false if out of date
+local function VersionCheck(lversion, rversion, vtypes)
+    local lvtable = VersionStringToTable(lversion)
+    local rvtable = VersionStringToTable(rversion)
+    for index in ipairs(lvtable) do
+        if lvtable[index] < rvtable[index] then
+            return false, "out of date by a " .. (vtypes and vtypes[index] or index) .. " version"
+        elseif lvtable[index] > rvtable[index] then
+            break
+        end
+    end
+    return true, "is not out of date"
+end
+--#endregion Version Functions
+
+-----------------------------------
+-- Translation Functions
+-----------------------------------
+--#region Translation Functions
+
+---@return boolean
+---@return table
+local function GetTranslationFileMetadata(path)
+    local metadata = {}
+    local file, err = io.open(path, "r")
+    if file then
+        local line = file:read("l")
+        local iter = 0
+        while GetCharacterFromString(line, 1) == "@" do
+            local key, value = GetKeyValueFromLine(line:sub(2), 1)
+            if key then
+                metadata[key] = value
+            else
+                --util.log("Failure in getting key-value from line:\n"..line)
+                if not SCRIPT_SILENT_START then
+                    util.toast("Failure in reading translation file!")
+                end
+                break
+            end
+            if iter >= 10 then
+                break
+            end
+            iter = iter + 1
+            line = file:read("l")
+        end
+        file:close()
+    else
+        --util.log("Failure in opening:\n"..path.."\nReason: "..(err or "unspecified"))
+        return false, metadata
+    end
+    return true, metadata
+end
+
+---@param language table|string
+local function TranslateLabels(language)
+    local path
+    if type(language) == "table" then
+        path = language["path"]
+    elseif type(language) == "string" then
+        path = language
+    else
+        error("TranslateLabels was not given a valid type!")
+    end
+
+    local lvalue, rvalue
+    for line in io.lines(path) do
+        local first_char = GetCharacterFromString(line, 1)
+        if first_char == "!" or first_char == "#" or first_char == "@" then
+
+        else
+            lvalue, rvalue = GetKeyValueFromLine(line, 1)
+            if lvalue then
+                if MenuLabels[lvalue] ~= nil then
+                    MenuLabels[lvalue] = rvalue:gsub("\\n", "\n") or "ERROR"
+                else
+                    util.toast("Error occurred while reading Translation file. Translation file may be corrupt or out of date.")
+                    --util.log("Translation file attempted to assign a non-existant MenuLabel a value. $"..lvalue)
+                end
+            end
+        end
+    end
+end
+
+local Languages = {
+    [1] = {"EN - English", {"en"}, ""},
+}
+
+if not filesystem.exists(MB_TRANSLATIONS_DIR) then
+    filesystem.mkdirs(MB_TRANSLATIONS_DIR)
+end
+
+local dirlen = string.len(MB_TRANSLATIONS_DIR)
+for index, filepath in ipairs(filesystem.list_files(MB_TRANSLATIONS_DIR)) do
+    local success, metadata = GetTranslationFileMetadata(filepath) -- stuff like version, creator, etc.
+    local filename = filepath:sub(dirlen + 1, -5):gsub("_", " ") -- transforms "_" to " ", because discord is stinky and replaces spaces with "_".
+    local langcode = string.match(filename, "([%a-]+) - ")
+    local author  = (success and metadata.Author ~= nil)  and "Author: " .. metadata.Author or "No author"
+    local version = (success and metadata.Version ~= nil) and metadata.Version or "0.0.0"
+    local uptodate, ood_msg
+
+    if success and metadata.Version ~= nil then
+        uptodate, ood_msg = VersionCheck(version, THIS_RELEASE_VERSION)
+    else
+        uptodate, ood_msg = false, "no msg"
+    end
+
+    Languages[#Languages+1] = {
+        filename, {langcode}, author .. "\n" .. version,
+        path = filepath, version = version, uptodate = uptodate, ood_msg = ood_msg, author = author, filename = filename, langcode = langcode,
+    }
+end
+
+local SelectedLanguage
+if #Languages > 1 then
+    local LanguageSelector = menu.list_action(menu.my_root(), "Language", {"mblang"}, "", Languages, function(index, name)
+        SelectedLanguage = name
+        if index ~= 1 then
+            if not Languages[index].uptodate then
+                util.toast("Translation file is out of date!")
+                util.log("Translation file is out of date!")
+            end
+            TranslateLabels(Languages[index])
+        end
+    end)
+        
+    while SelectedLanguage == nil do
+        util.yield()
+    end
+        
+    menu.delete(LanguageSelector)
+else
+    SelectedLangauge = Languages[1][1]
+end
+--#endregion Translation Functions
+
+local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
+local ACCEPTED_WARNING = false
+while not ACCEPTED_WARNING do
+    menu.show_warning(menu_findsaferways, CLICK_HOTKEY, MenuLabels.WARNINGRISKY_TOAST, function() ACCEPTED_WARNING = true end, function() util.stop_script() end, false)
+    util.yield()
+end
+
+-----------------------------------
+-- HTTP Functions
+-----------------------------------
+--#region HTTP Functions
+local MOTD = ""
+
+local HTTPHosts = {
+    {HOST = "gist.githubusercontent.com", PATH = "/VSussyImpostor/8cf3bf39ae47218c4ee20a9ef96871ca/raw"},
+    {HOST = "pastebin.com", PATH = "/raw/yaMG2Vz1"},
+}
+
+--HTTP Contents below
+--[[
+motd = ""
+version = "0.3.2"
+killswitch_safeloop = false
+killswitch_specialcargo = false
+killswitch_maxsellprice = false
+killswitch_autocomplete = false
+]]
+
+local HTTP = {
+    PENDING = false,
+    SUCCESS = false,
+    TRIES = 0,
+    HOST = HTTPHosts[1].HOST,
+    PATH = HTTPHosts[1].PATH,
+    HOST_NUMBER = 1,
+    SUCCESS_WAIT_TIME = (90 * 1000), -- 1 minute, 30 seconds
+    GIVEUP_TIME = (30 * 1000), -- 30 seconds
+    WAIT_TIME = (3 * 1000), -- 3 seconds
+    FAILSAFE = false,
+}
+
+local remote = {
+    motd = "",
+    version = "",
+    killswitches = {
+        ["safeloop"] = false,
+        ["specialcargo"] = false,
+        ["maxsellprice"] = false,
+        ["autocomplete"] = false,
+    },
+}
+
+local function StringToBoolean(str)
+    return str == "true"
+end
+
+local function LinesToTable(lines)
+    local result = {}
+    for s in lines:gmatch("[^\r\n]+") do
+        table.insert(result, s)
+    end
+    return result
+end
+
+local function IsKeyKillswitch(key)
+    return key:startswith("killswitch_")
+end
+
+local function GetKillswitchFromKey(key)
+    -- 12 is the length of "killswitch_"
+    return string.sub(key, 12, -1)
+end
+
+local function ActivateFailsafe()
+    if not HTTP.FAILSAFE then
+        util.toast(MenuLabels.HTTPFAILSAFE .. " (HTTP E3)")
+        for name, value in pairs(remote.killswitches) do
+            remote.killswitches[name] = true
+        end
+        HTTP.FAILSAFE = true -- in order to avoid this chunk of code running multiple times
+    end
+end
+
+local function HandleHTTPResponse(response)
+    for index, line in ipairs(LinesToTable(response)) do
+        local key, value = GetKeyValueFromLine(line)
+        if not key or not value then
+            util.toast(MenuLabels.HTTPINVALID .. " (HTTP E2)")
+            HTTP.SUCCESS = false -- don't immmediately trigger failsafe, treat this as a failed request
+            return -- jump out of handling, try again
+        end
+        if IsKeyKillswitch(key) then
+            remote.killswitches[GetKillswitchFromKey(key)] = StringToBoolean(value)
+        else
+            remote[key] = string.sub(value, 2, -2) -- drop the quotes
+        end
+    end
+
+    HTTP.FAILSAFE = false -- reset failsafe if it triggered before
+
+    if not IGNORE_VERSION_DIFFERENCE and IS_RELEASE_VERSION and not VersionCheck(THIS_RELEASE_VERSION, remote.version) then
+        util.toast(MenuLabels.SCRIPTOUTOFDATE, TOAST_ALL)
+    end
+
+    if MOTD ~= remote.motd then
+        MOTD = remote.motd
+        if MOTD ~= "" then
+            util.toast(GetLabelText(MenuLabels.PREFIX_MOTD, MOTD), TOAST_ALL) -- yeah i cant really think of a good way to only show this only after the script is "started". and a script "start" is a loose term here, so im going to base it on clicking the start button and thats it. any further input made by the user then causes those toasts to appear.
+        end
+    end
+end
+
+local function HTTPGiveUp()
+    util.toast(MenuLabels.HTTPGIVEUP .. " (HTTP E1)", TOAST_ALL)
+    ActivateFailsafe()
+end
+
+local function HTTPSwitchHost()
+    HTTP.HOST_NUMBER = HTTP.HOST_NUMBER == #HTTPHosts and 1 or HTTP.HOST_NUMBER + 1
+    HTTP.HOST = HTTPHosts[HTTP.HOST_NUMBER].HOST
+    HTTP.PATH = HTTPHosts[HTTP.HOST_NUMBER].PATH
+end
+
+local function HTTPFail()
+    -- if not IS_RELEASE_VERSION then
+    --     util.toast("HTTP Attempt Failed.", TOAST_ALL)
+    -- end
+    HTTP.PENDING = false
+    HTTP.SUCCESS = false
+    HTTP.TRIES = HTTP.TRIES + 1
+end
+
+local function HTTPSuccess(response)
+    -- if not IS_RELEASE_VERSION then
+    --     util.toast("HTTP Attempt Succeeded.", TOAST_ALL)
+    -- end
+    HTTP.PENDING = false
+    HTTP.SUCCESS = true
+    HandleHTTPResponse(response)
+end
+
+local function HTTPTry()
+    while HTTP.PENDING do -- prevent two http requests at once
+        util.yield()
+    end
+    HTTP.PENDING = true
+    async_http.init(HTTP.HOST, HTTP.PATH, HTTPSuccess, HTTPFail)
+    async_http.dispatch()
+    while HTTP.PENDING do
+        util.yield()
+    end
+    return HTTP.SUCCESS
+end
+
+local function HTTPHeartbeat()
+    HTTPTry()
+    if HTTP.SUCCESS then
+        util.yield(HTTP.SUCCESS_WAIT_TIME)
+    elseif HTTP.TRIES == 1 then
+        util.yield(HTTP.WAIT_TIME)
+    elseif HTTP.TRIES == 2 then
+        util.yield(HTTP.WAIT_TIME)
+        HTTPSwitchHost()
+    elseif HTTP.TRIES == 3 then
+        util.yield(HTTP.WAIT_TIME)
+    elseif HTTP.TRIES >= 4 then -- Forcing an HTTP connection by debug functions will increment the count, so we do >= to account for that case
+        -- Our connection is fucked, give up
+        HTTPGiveUp()
+        util.yield(HTTP.GIVEUP_TIME)
+        HTTP.TRIES = 0
+    end
+end
+
+local loading_divider = menu.divider(menu.my_root(), MenuLabels.RETREIVINGINFO)
+util.create_tick_handler(HTTPHeartbeat)
+
+while not HTTP.SUCCESS and HTTP.TRIES < 4 do
+    util.yield()
+end
+
+menu.delete(loading_divider)
+--#endregion HTTP Functions
+
+-----------------------------------
+-- Custom Command Functions
+-----------------------------------
+--#region Custom Command Functions
+local function RegisterUpdatingReadOnlyCommand(list, title, value_func)
+    local command = menu.readonly(list, title, value_func())
+    local handler = menu.on_tick_in_viewport(command, function() 
+        menu.set_value(command, value_func())
+    end)
+    return command, handler
+end
+--#endregion Custom Command Functions
+
+-----------------------------------
+-- Basic Functions
+-----------------------------------
+--#region Basic Functions
+
+local function SetBits(int, ...)
+    local bits = {...}
+    for ind, bit in ipairs(bits) do
+        int = int | (1 << bit)
+    end
+    return int
+end
+
+local function ClearBits(int, ...)
+    local bits = {...}
+    for ind, bit in ipairs(bits) do
+        int = int & ~(1 << bit)
+    end
+    return int
+end
+
+local function IsBitSet(int, offset)
+    return ((int >> offset) & 1) == 1
+end
+
+local function IntToBitString(int)
+    local bits = {}
+    for i = 0, 31 do
+        bits[31 - i] = IsBitSet(int, i) and 1 or 0
+    end
+    return table.concat(bits, "", 0)
+end
+
+local prefix = "MP" .. util.get_char_slot() .. "_"
+local stat_ptr = memory.alloc(4)
+---@return integer|nil
+local function GetStatInt(stat)
+    if STATS_STAT_GET_INT(util.joaat(stat), stat_ptr, -1) then
+        return memory.read_int(stat_ptr)
+    else
+        --util.log("Failed to get stat " .. stat)
+    end
+    return nil
+end
+
+local function GetStatBool(stat)
+    if STATS_STAT_GET_BOOL(util.joaat(stat), stat_ptr, -1) then
+        return memory.read_bool(stat_ptr)
+    else
+        --util.log("Failed to get stat " .. stat)
+    end
+    return nil
+end
+
+local function GetPackedStatBool(stat)
+    return STATS_GET_PACKED_STAT_BOOL_CODE(stat, util.get_char_slot())
+end
+
+local function SetStatInt(stat, value)
+    if STATS_STAT_SET_INT(util.joaat(stat), value, true) then
+        return true
+    else
+        --util.log("Failed to set stat "..stat.." to "..value)
+    end
+    return false
+end
+
+local function SetStatBool(stat, value)
+    if STATS_STAT_SET_BOOL(util.joaat(stat), value, true) then
+        return true
+    else
+        --util.log("Failed to set stat "..stat.." to "..value)
+    end
+    return false
+end
+
+local function SetPackedStatBool(stat, value)
+    STATS_SET_PACKED_STAT_BOOL_CODE(stat, value, util.get_char_slot())
+end
+
+local function GetGlobalInt(address)
+    return memory.read_int(memory.script_global(address))
+end
+
+local function GetGlobalFloat(address)
+    return memory.read_float(memory.script_global(address))
+end
+
+local function SetGlobalInt(address, value)
+    memory.write_int(memory.script_global(address), value)
+end
+
+local function SetGlobalFloat(address, value)
+    memory.write_float(memory.script_global(address), value)
+end
+
+local function SetGlobalBits(address, ...)
+    local value = GetGlobalInt(address)
+    if value then
+        return SetGlobalInt(address, SetBits(value, ...))
+    end
+end
+
+local function GetLocalInt(script_str, script_local)
+    local addr = memory.script_local(script_str, script_local)
+    return addr ~= 0 and memory.read_int(addr) or nil
+end
+
+local function GetLocalFloat(script_str, script_local)
+    local addr = memory.script_local(script_str, script_local)
+    return addr ~= 0 and memory.read_float(addr) or nil
+end
+
+local function GetLocalString(script_str, script_local)
+    local addr = memory.script_local(script_str, script_local)
+    return addr ~= 0 and memory.read_string(addr) or nil
+end
+
+local function ClearGlobalBits(address, ...)
+    local value = GetGlobalInt(address)
+    if value then
+        return SetGlobalInt(address, ClearBits(value, ...))
+    end
+end
+
+local function SetLocalInt(script_str, script_local, value)
+    local addr = memory.script_local(script_str, script_local)
+    if addr ~= 0 then
+        memory.write_int(addr, value)
+    end
+    return addr ~= 0
+end
+
+local function SetLocalFloat(script_str, script_local, value)
+    local addr = memory.script_local(script_str, script_local)
+    if addr ~= 0 then
+        memory.write_float(addr, value)
+    end
+    return addr ~= 0
+end
+
+local function SetLocalString(script_str, script_local, value)
+    local addr = memory.script_local(script_str, script_local)
+    if addr ~= 0 then
+        memory.write_string(addr, value)
+    end
+    return addr ~= 0
+end
+
+local function SetLocalBits(script_str, script_local, ...)
+    local value = GetLocalInt(script_str, script_local)
+    if value then
+        return SetLocalInt(script_str, script_local, SetBits(value, ...))
+    end
+end
+
+local function ClearLocalBits(script_str, script_local, ...)
+    local value = GetLocalInt(script_str, script_local)
+    if value then
+        return SetLocalInt(script_str, script_local, ClearBits(value, ...))
+    end
+end
+
+local function IsScriptRunning(str)
+    return SCRIPT_GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(util.joaat(str)) > 0
+end
+
+local function StartScript(str, arg_count)
+    if not SCRIPT_DOES_SCRIPT_EXIST(str) then
+        return false
+    end
+    if IsScriptRunning(str) then
+        return true
+    end
+    SCRIPT_REQUEST_SCRIPT(str)
+    while not SCRIPT_HAS_SCRIPT_LOADED (str) do
+        util.yield()
+    end
+    SYSTEM_START_NEW_SCRIPT(str, arg_count or 0)
+    SCRIPT_SET_SCRIPT_AS_NO_LONGER_NEEDED(str)
+    return true
+end
+
+local function IsInSession()
+    return util.is_session_started() and not util.is_session_transition_active()
+end
+
+local function PressScaleformButton(buttonID)
+    PAD_SET_CONTROL_VALUE_NEXT_FRAME(2, buttonID, 1)
+    util.yield()
+    PAD_SET_CONTROL_VALUE_NEXT_FRAME(2, buttonID, 0) -- this line is probably not needed but oh well
+end
+
+
+local function PressEnterOnScaleform()
+    PressScaleformButton(201)
+end
+
+local function PressBackOnScaleform()
+    PressScaleformButton(202)
+end
+
+local function SetEntityCoords(entity, coords)
+    ENTITY_SET_ENTITY_COORDS_NO_OFFSET(entity, coords.x, coords.y, coords.z, false, false, false)
+end
+
+local function LoadArea(coords)
+    local has_ground, ground_z = util.get_ground_z(coords.x, coords.y, coords.z)
+    if not has_ground then
+        local rot = CAM_GET_FINAL_RENDERED_CAM_ROT(2)
+        local cam = CAM_CREATE_CAM_WITH_PARAMS("DEFAULT_SCRIPTED_CAMERA", coords.x, coords.y, coords.z+2, rot.x, rot.y, rot.z, CAM_GET_FINAL_RENDERED_CAM_FOV(), true, 2)
+        CAM_SET_CAM_ACTIVE(cam, true)
+        CAM_RENDER_SCRIPT_CAMS(true, false, 0, false, false, 0)
+        local count = 0
+        local max = 500
+        while not has_ground and count < max do
+            has_ground, ground_z = util.get_ground_z(coords.x, coords.y, coords.z+count)
+            count = count + 1
+            util.yield()
+        end
+        CAM_RENDER_SCRIPT_CAMS(false, false, 0, false, false, 0)
+        CAM_SET_CAM_ACTIVE(cam, false)
+        CAM_DESTROY_CAM(cam, false)
+        return max > count
+    end
+    return true
+end
+
+local function AddToTotalEarned(amount, type)
+    type.amount = type.amount + amount
+    local str = type and GetLabelText(type.prefix, GetLabelText(MenuLabels.PREFIX_TOTALEARNED, type.amount)) or GetLabelText(MenuLabels.PREFIX_TOTALEARNED, type.amount)
+    util.toast(str, TOAST_ABOVE_MAP | TOAST_LOGGER)
+end
+--#endregion Basic Functions
+
+-----------------------------------
+-- Global Functions
+-----------------------------------
+--#region Global Functions
+
+local function GetOrgOffset()
+    return (1892703 + 1 + (players.user() * 599) + 10)
+end
+
+local function IsInOrg()
+    return GetGlobalInt(GetOrgOffset()) ~= -1
+end
+
+local function GetOrgType()
+    -- Returns -1, 0, 1. None, CEO, MC. This will only work if you are the boss of the org
+    return GetGlobalInt(GetOrgOffset() + 428)
+end
+
+local function RegisterAsCEO()
+    if IsInSession() and not IsInOrg() then
+        SetGlobalInt(GetOrgOffset(), players.user()) -- Set self as boss
+        SetGlobalInt(GetOrgOffset() + 428, 0) -- Set type to CEO
+    end
+end
+
+-- Business / Other Online Work Stuff
+local function GetOnlineWorkOffset()
+    return (1853348 + 1 + (players.user() * 834) + 267)
+end
+
+local function GetNightClubHubOffset()
+    return (GetOnlineWorkOffset() + 295) -- 291
+end
+
+local function GetNightClubOffset()
+    return (GetOnlineWorkOffset() + 336) -- 332
+end
+
+local function GetWarehouseOffset()
+    return (GetOnlineWorkOffset() + 114) + 1 -- 110
+end
+
+local function GetMCBusinessOffset()
+    return (GetOnlineWorkOffset() + 191) + 1 -- 187
+end
+
+-- Nightclub
+local function GetHubValueOffsetFromSlot(slot) 
+    return (GetNightClubHubOffset() + 8 + 1) + slot
+end
+
+local function GetHubValueFromSlot(slot)
+    return GetGlobalInt(GetHubValueOffsetFromSlot(slot))
+end
+
+local function SetHubValueFromSlot(slot, value)
+    SetGlobalInt(GetHubValueOffsetFromSlot(slot), value)
+end
+
+local function GetHubProductOfTypeFromStat(slot)
+    return GetStatInt(prefix .. "HUB_PROD_TOTAL_" .. slot)
+end
+
+local function GetSafeCashValueFromStat()
+    return GetStatInt(prefix .. "CLUB_SAFE_CASH_VALUE")
+end
+
+local function GetNightClubPropertyID()
+    return GetGlobalInt(GetNightClubOffset())
+end
+
+-- MC Businesses
+local function GetMCBusinessDataOffset(slot)
+    return GetMCBusinessOffset() + (slot * 13)
+end
+
+local function GetMCBusinessProductionSpeed2(slot)
+    return GetMCBusinessDataOffset(slot) + 9
+end
+
+local function GetBusinessSuppliesFromStat(slot)
+    return GetStatInt(prefix .. "MATTOTALFORFACTORY" .. slot)
+end
+
+local function GetBusinessProductFromStat(slot)
+    return GetStatInt(prefix .. "PRODTOTALFORFACTORY" .. slot)
+end
+
+local function GetBunkerResearchFromStat()
+    return GetStatInt(prefix .. "RESEARCHTOTALFORFACTORY5")
+end
+
+local function GetMCBusinessEquipmentUpgradeStatusFromStat(slot)
+    return GetStatInt(prefix .. "FACTORYUPGRADES" .. slot)
+end
+
+local function GetMCBusinessStaffUpgradeStatusFromStat(slot)
+    return GetStatInt(prefix .. "FACTORYUPGRADES" .. slot .. "_1")
+end
+
+-- Special Cargo
+local function GetSpecialCargoCrateAmountOffset(slot)
+    return GetWarehouseOffset() + (slot * 3) + 1
+end
+
+local function GetSpecialCargoCrateAmount(warehouse)
+    return GetGlobalInt(GetSpecialCargoCrateAmountOffset(warehouse))
+end
+
+local function SetSpecialCargoCrateAmount(warehouse, value)
+    return SetGlobalInt(GetSpecialCargoCrateAmountOffset(warehouse), value)
+end
+--#endregion Global Functions
 
 local function PopulateMyBusinessesTable()
     if util.is_session_started() then
         for slot = 0, 4 do
-            local property      = GetStatInt(prefix .. ConvertBytesToString{102, 97, 99, 116, 111, 114, 121, 115, 108, 111, 116} .. slot) -- returns a property ID number
-            --local property      = GetStatInt(prefix .. "factoryslot" .. slot) -- returns a property ID number
+            local property      = GetStatInt(prefix .. "factoryslot" .. slot) -- returns a property ID number
             local property_info = MCBusinessPropertyInfo[property]
             local type_number   = property_info and property_info.type or -1
-            --local type_string   = property_info and MCBusinessTypesInOrder[type_number] or "None"
             local type_string   = property_info and MCBusinessTypesOrderedWithLabels[type_number].name or "None"
             
 
@@ -1396,7 +1445,6 @@ local function PopulateMyBusinessesTable()
         do -- Bunker
             local slot_and_type = 5
             local property      = GetStatInt(prefix .. "factoryslot" .. slot_and_type) -- returns a property ID number
-            --local type_string   = MCBusinessTypesInOrder[slot_and_type]
             local type_string   = MCBusinessTypesOrderedWithLabels[slot_and_type].name
             
 
@@ -1414,12 +1462,15 @@ local function PopulateMyBusinessesTable()
     end
 end
 
+-- returns true if already alone, false if it it had to bealone
 local function CheckIfAlone()
     if #players.list() > 1 then
         util.toast(MenuLabels.BEALONE_TOAST)
         menu.trigger_commands("bealone")
         util.yield(1000)
+        return false
     end
+    return true
 end
 
 local function GetPlayerPropertyOffset()
@@ -1462,6 +1513,7 @@ end
 local function SetSpecialCargoValues(state)
     local MaxSellPrice = globals.SpecialCargoMaxSellPriceValue
     if state then
+        
 
         util.create_thread(function()
             local warehouse = GetLocalInt(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentProperty)
@@ -1472,9 +1524,8 @@ local function SetSpecialCargoValues(state)
             end
         end)
 
-        warehouse = GetWarehouseSlotFromProperty(Selected_Warehouse)
-
         local crate_amount = GetSpecialCargoCrateAmount(Selected_Warehouse)
+
         if crate_amount > 0 then
             SetGlobalInt(globals.SpecialCargoCrateMaxThreshold, 0)
             SetGlobalInt(globals.SpecialCargoRewardPerCrate, MaxSellPrice)
@@ -1499,9 +1550,8 @@ local function SetSpecialCargoValues(state)
     end
 end
 
-local function GetSpecialCargoCrateAmountFromStat(warehouse)
-    return GetStatInt(prefix .. ConvertBytesToString{99, 111, 110, 116, 111, 116, 97, 108, 102, 111, 114, 119, 104, 111, 117, 115, 101} .. warehouse) or 0
-    --return GetStatInt(prefix .. "contotalforwhouse" .. warehouse) or 0
+local function GetSpecialCargoCrateAmountFromStat(slot)
+    return GetStatInt(prefix .. "contotalforwhouse" .. slot) or 0
 end
 
 -- Nightclub
@@ -1552,7 +1602,7 @@ local function FixNCSafe()
     end
     while IsInSession() and (GetSafeValue() > 300000 or GetSafeValue() < 0) do
         if IsPlayerInNightclub() then
-            SetEntityCoords(PLAYER.PLAYER_PED_ID(), {x = -1620.5, y = -3014.9, z = -75.2})
+            SetEntityCoords(PLAYER_PLAYER_PED_ID(), {x = -1620.5, y = -3014.9, z = -75.2})
         end
         local before = GetSafeValue()
         TriggerNCSafeAddMoneyTransaction(300000, false)
@@ -1573,8 +1623,7 @@ local function FixNCHubCapacities()
 end
 
 local function SetNightclubPayTimeLeft(time)
-    return SetStatInt(prefix .. ConvertBytesToString{67, 76, 85, 66, 95, 80, 65, 89, 95, 84, 73, 77, 69, 95, 76, 69, 70, 84}, -1)
-    --return SetStatInt(prefix .. "CLUB_PAY_TIME_LEFT", -1)
+    return SetStatInt(prefix .. "CLUB_PAY_TIME_LEFT", time or -1)
 end
 
 -- MC Business
@@ -1586,7 +1635,7 @@ local function TeleportToMCProperty(property_id)
     if property_id ~= 0 and IsInSession() then
         local coords = MCBusinessPropertyInfo[property_id].coords
         if LoadArea(coords) then
-            SetEntityCoords(PLAYER.PLAYER_PED_ID(), coords)
+            SetEntityCoords(PLAYER_PLAYER_PED_ID(), coords)
         end
     end
 end
@@ -1600,6 +1649,7 @@ menu.divider(menu.my_root(), MenuLabels.SALESABUSE_DIVIDER)
 ----------------------------------
 -- Special Cargo Shit
 ----------------------------------
+--#region Special Cargo Shit
 local SCMan = menu.list(menu.my_root(), MenuLabels.SPECIALCARGO, {}, MenuLabels.SPECIALCARGOLIST_DESC)
 
 local WarehouseSelector = menu.list_select(SCMan, MenuLabels.WAREHOUSE, {"selectcargowarehouse"}, MenuLabels.SPECIALCARGOWAREHOUSE_DESC, MenuCurrentWarehouses, 0, function(value)
@@ -1610,7 +1660,7 @@ menu.action(SCMan, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.WAREHOUSE), {"
     local tbl = WarehousePropertyInfo[GetWarehousePropertyFromSlot(Selected_Warehouse)]
     if tbl ~= nil then
         local pos = tbl.coords
-        SetEntityCoords(PLAYER.PLAYER_PED_ID(), pos)
+        SetEntityCoords(PLAYER_PLAYER_PED_ID(), pos)
     end
 end)
 
@@ -1618,21 +1668,14 @@ menu.toggle_loop(SCMan, MenuLabels.MONITOR, {"monitorcargo"}, GetLabelText(MenuL
     if IsInSession() then
         local crate_amount = GetSpecialCargoCrateAmountFromStat(Selected_Warehouse)
         local warehouse_property_info = WarehousePropertyInfo[GetWarehousePropertyFromSlot(Selected_Warehouse)]
-        local capacity = warehouse_property_info and warehouse_property_info.capacity or 0
+        local capacity = warehouse_property_info and warehouse_property_info.capacity or "unk"
         util.draw_debug_text(GetLabelText(MenuLabels.INFO_SCWAREHOUSE, Selected_Warehouse+1, crate_amount, capacity))
     end
 end)
 
---[[ menu.action(SpecialCargo, "tp all pickups to me", {}, "", function() -- cargo bot soon:tm:
-	local table = entities.get_all_pickups_as_handles()
-	local MyPed = PLAYER.PLAYER_PED_ID()
-	local MyCoords = ENTITY.GET_ENTITY_COORDS(MyPed, false)
-	for i = 1, #table do
-		ENTITY.SET_ENTITY_COORDS_NO_OFFSET(table[i], MyCoords.x, MyCoords.y, MyCoords.z, 0, 0, 0)
-	end
-end) ]]
+local SCRefs = {}
 
-menu.toggle_loop(SCMan, MenuLabels.MAXSELLPRICE, {"maxsellcargo"}, MenuLabels.SPECIALCARGOMAXSELLPRICE_DESC, function()
+SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, MenuLabels.MAXSELLPRICE, {"maxsellcargo"}, MenuLabels.SPECIALCARGOMAXSELLPRICE_DESC, function()
     if remote.killswitches.specialcargo or remote.killswitches.maxsellprice then
         util.toast(remote.killswitches.maxsellprice and MenuLabels.KILLSWITCH_MAXSELLPRICE or MenuLabels.KILLSWITCH_SPECIALCARGO)
         SetSpecialCargoValues(false)
@@ -1647,7 +1690,8 @@ menu.toggle_loop(SCMan, MenuLabels.MAXSELLPRICE, {"maxsellcargo"}, MenuLabels.SP
 end, function()
     SetSpecialCargoValues(false)
 end)
-menu.toggle_loop(SCMan, GetLabelText(MenuLabels.BYPASSCOOLDOWN, MenuLabels.BUYMISSION), {"nobuycdcargo"}, GetLabelText(MenuLabels.BYPASSCOOLDOWN_DESC, MenuLabels.START, MenuLabels.BUYMISSION), function()
+
+SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.BYPASSCOOLDOWN, MenuLabels.BUYMISSION), {"nobuycdcargo"}, GetLabelText(MenuLabels.BYPASSCOOLDOWN_DESC, MenuLabels.START, MenuLabels.BUYMISSION), function()
     if remote.killswitches.specialcargo then
         util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
         SetGlobalInt(globals.SpecialCargoBypassBuyCooldown, 300000)
@@ -1660,7 +1704,7 @@ end, function()
     SetGlobalInt(globals.SpecialCargoBypassBuyCooldown, 300000)
 end)
 
-menu.toggle_loop(SCMan, GetLabelText(MenuLabels.BYPASSCOOLDOWN, MenuLabels.SELLMISSION), {"nosellcdcargo"}, GetLabelText(MenuLabels.BYPASSCOOLDOWN_DESC, MenuLabels.START, MenuLabels.SELLMISSION), function()
+SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.BYPASSCOOLDOWN, MenuLabels.SELLMISSION), {"nosellcdcargo"}, GetLabelText(MenuLabels.BYPASSCOOLDOWN_DESC, MenuLabels.START, MenuLabels.SELLMISSION), function()
     if remote.killswitches.specialcargo then
         util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
         SetGlobalInt(globals.SpecialCargoBypassSellCooldown, 1800000)
@@ -1676,34 +1720,39 @@ end)
 do
     local function sell_func_423()  -- sell_func_423
         local val = GetLocalInt(locals.SpecialCargoSellString, locals.SpecialCargoSellSubType)
-        if val == 8 or val == 11 or val == 7 then
-            local val2 = GetGlobalInt(1946098) -- now 1946098 was 1946785
-            if val2 <= 4 then
-                return 3
-            elseif val2 <= 9 then
-                return 6
-            else
-                return 10
+        if val then
+            if val == 8 or val == 11 or val == 7 then
+                local val2 = GetGlobalInt(globals.SpecialCargoSellFuncSomething)
+                if val2 <= 4 then
+                    return 3
+                elseif val2 <= 9 then
+                    return 6
+                else
+                    return 10
+                end
+            elseif val == 1 or val == 2 or val == 10 then
+                return 5
             end
-        elseif val == 1 or val == 2 or val == 10 then
-            return 5
         end
         return 1
     end
 
     local function get_sell_mission_goal() -- sell_func_422
-        local val = GetLocalInt(locals.SpecialCargoSellString, locals.SpecialCargoSellStatus)
-        if val == 0 or val == 2 or val == 3 or val == 4 then
-            return sell_func_423()
-        elseif val == 1 or val == 5 then
-            return sell_func_423() * 2
-        elseif val == 6 or val == 7 then
-            return sell_func_423() * 3
+        local val = GetLocalInt(locals.SpecialCargoSellString, locals.SpecialCargoSellType)
+        if val then
+            local ret = sell_func_423()
+            if val == 0 or val == 2 or val == 3 or val == 4 then
+                return ret
+            elseif val == 1 or val == 5 then
+                return ret * 2
+            elseif val == 6 or val == 7 then
+                return ret * 3
+            end
         end
         return -1
     end
 
-    menu.toggle_loop(SCMan, GetLabelText(MenuLabels.AUTOCOMPLETE, MenuLabels.BUYMISSION), {"autocompletespecialbuy"}, GetLabelText(MenuLabels.AUTOCOMPLETE_DESC, MenuLabels.BUYMISSION), function()
+    SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.AUTOCOMPLETE, MenuLabels.BUYMISSION), {"autocompletespecialbuy"}, GetLabelText(MenuLabels.AUTOCOMPLETE_DESC, MenuLabels.BUYMISSION), function()
         if remote.killswitches.specialcargo or remote.killswitches.autocomplete then
             util.toast(remote.killswitches.autocomplete and MenuLabels.KILLSWITCH_AUTOCOMPLETE or  MenuLabels.KILLSWITCH_SPECIALCARGO)
             util.stop_thread()
@@ -1748,15 +1797,13 @@ do
             if not IsScriptRunning(locals.SpecialCargoSecuroString) then
                 if StartScript(locals.SpecialCargoSecuroString, locals.SpecialCargoSecuroArgs) then
                     if GetLocalInt(locals.SpecialCargoSecuroString, 0) then
-                        --SetLocalString(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentScaleform, "securoserv")--iLocal_613 = the scaleform string to use ("warehouse" || "securoserv")
                         SetPlayerPropertyID(GetWarehousePropertyFromSlot(Selected_Warehouse)-1) --set global current property to warehouse one
-                        --SetLocalInt(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentBitset, SetBits(GetLocalInt(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentBitset), 13))--set iLocal_619 bit 13
                         SetLocalBits(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentBitset, 13)
-                        SetLocalInt(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentProperty, GetWarehousePropertyFromSlot(Selected_Warehouse)) --set iLocal_795 to current selected warehouse property id (non-global-index based)
-                        local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.PLAYER_PED_ID())
-                        SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosX, pos.x)--set Local_816 to current location every tick (if self is greater than 5f to this local, kill script)
-                        SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosY, pos.y)--set Local_816 to current location every tick (if self is greater than 5f to this local, kill script)
-                        SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosZ, pos.z)--set Local_816 to current location every tick (if self is greater than 5f to this local, kill script)
+                        SetLocalInt(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentProperty, GetWarehousePropertyFromSlot(Selected_Warehouse)) --set this local to current selected warehouse property id (non-global-index based)
+                        local pos = ENTITY_GET_ENTITY_COORDS(PLAYER_PLAYER_PED_ID())
+                        SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosX, pos.x) -- set this local to current location every tick (if self is greater than 5f to this local, kill script)
+                        SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosY, pos.y)
+                        SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosZ, pos.z)
                         util.yield()
                         return true
                     end
@@ -1774,8 +1821,7 @@ do
         end
     end
 
-    local BLOCK_SPECIALCARGO_AUTOSELL_LOOP = false
-    menu.toggle_loop(SCMan, GetLabelText(MenuLabels.AUTOCOMPLETE, MenuLabels.SELLMISSION), {"autocompletespecialsell"}, GetLabelText(MenuLabels.AUTOCOMPLETE_DESC, MenuLabels.SELLMISSION), function()
+    SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.AUTOCOMPLETE, MenuLabels.SELLMISSION), {"autocompletespecialsell"}, GetLabelText(MenuLabels.AUTOCOMPLETE_DESC, MenuLabels.SELLMISSION), function()
         if remote.killswitches.specialcargo then
             util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
             util.stop_thread()
@@ -1783,15 +1829,14 @@ do
         end
 
         if IsInSession() then
-            if not BLOCK_SPECIALCARGO_AUTOSELL_LOOP then
-                if AutoCompleteSellMission() then
-                    AddToTotalEarned(globals.SpecialCargoMaxSellPriceValue, TotalEarnedTypes.specialcargo)
-                    util.yield(1000)
-                    SetPlayerInOrgWork(-1)
-                end
+            if AutoCompleteSellMission() then
+                AddToTotalEarned(globals.SpecialCargoMaxSellPriceValue, TotalEarnedTypes.specialcargo)
+                util.yield(1000)
+                SetPlayerInOrgWork(-1)
             end
         end
     end)
+
     menu.action(SCMan, GetLabelText(MenuLabels.OPENSCREEN, MenuLabels.TERRORBYTE), {"openterrorbyte"}, GetLabelText(MenuLabels.OPENSCREEN_DESC, MenuLabels.TERRORBYTE), function()
         if remote.killswitches.specialcargo then
             util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
@@ -1802,10 +1847,10 @@ do
             if not IsInOrg() then
                 RegisterAsCEO()
             end
-
             OpenTerrorbyteScreen()
         end
     end)
+
     menu.action(SCMan, GetLabelText(MenuLabels.OPENSCREEN, MenuLabels.WAREHOUSE), {"openwarehouse"}, GetLabelText(MenuLabels.OPENSCREEN_DESC, MenuLabels.WAREHOUSE), function()
         if remote.killswitches.specialcargo then
             util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
@@ -1820,7 +1865,7 @@ do
             OpenWarehouseScreen()
 
             while IsScriptRunning(locals.SpecialCargoSecuroString) do
-                local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.PLAYER_PED_ID())
+                local pos = ENTITY_GET_ENTITY_COORDS(PLAYER_PLAYER_PED_ID())
                 SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosX, pos.x)
                 SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosY, pos.y)
                 SetLocalFloat(locals.SpecialCargoSecuroString, locals.SpecialCargoStartingPosZ, pos.z)
@@ -1828,6 +1873,7 @@ do
             end
         end
     end)
+
     menu.action(SCMan, MenuLabels.SELLACRATE, {"sellacrate"}, MenuLabels.SELLACRATE_DESC, function()
         if remote.killswitches.specialcargo then
             util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
@@ -1835,6 +1881,8 @@ do
         end
 
         if IsInSession() then
+            SetPlayerPropertyID(-1) -- I mean, the script will end up kicking you out of your interior to begin the sell mission anyways
+
             if not IsInOrg() then
                 RegisterAsCEO()
                 util.yield()
@@ -1848,9 +1896,7 @@ do
                 util.yield()
                 if GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) > 0 then
                     StartSellMission()
-                    --if IS_BETA_VERSION then
-                        SetPlayerPropertyID(-1)
-                    --end
+                    SetPlayerPropertyID(-1)
                 else
                     util.toast(MenuLabels.SPECIALCARGONOMORECRATES)
                 end
@@ -1858,105 +1904,82 @@ do
         end
     end)
 
-    --[[local function SpecialCargoEZBuy()
-        local script = locals.SpecialCargoBuyScreenString
-        if GetLocalInt(script, 0) then
-            SetLocalInt(script, locals.SpecialCargoBuyScreenHasSelectedJobCategory, 1)
-            SetLocalInt(script, locals.SpecialCargoBuyScreenCurrentPrompt, 3)
-            SetLocalInt(script, locals.SpecialCargoBuyScreenCurrentCategory, 2)
-            SetLocalInt(script, locals.SpecialCargoBuyScreenWarehousePropertyId, GetWarehousePropertyFromSlot(Selected_Warehouse))
-            SetLocalInt(script, locals.SpecialCargoBuyScreenShipmentSize, 1)
-            SetLocalBits(script, locals.SpecialCargoBuyScreenBitset, 0, 4, 5)
+    local function SpecialCargoSourceNow()
+        if IsInSession() then
+            STATS_SET_PACKED_STAT_BOOL_CODE(32359 + Selected_Warehouse, true, util.get_char_slot())
+            SetPlayerPropertyID(-1)
         end
-    end]]
+    end
 
-    --#region NON_RELEASE_VERSION -
-    --[[ if not IS_RELEASE_VERSION then
-        menu.action(SCMan, "[DEBUG] Shortcut Buying Process", {}, "Fuck yeah", function()
-            if remote.killswitches.specialcargo then
-                util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
-                return
+    menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
+        if remote.killswitches.specialcargo then
+            util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+            return
+        end
+
+        for index, ref in ipairs(SCRefs) do
+            if not menu.get_value(ref) then
+                menu.trigger_command(ref, "on")
             end
-            
-            SpecialCargoEZBuy()
-        end)
+        end
 
-        scafkloop = menu.toggle_loop(SCMan, "[DEBUG] AFK Money Loop", {"scafkloop"}, "DO NOT tab out while crates are being bought.", function()
-            if remote.killswitches.specialcargo then
-                util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
-                return
-            end
+        if not IsInOrg() then
+            RegisterAsCEO()
+            util.yield()
+        elseif GetOrgType() == 1 then
+            util.toast(MenuLabels.SPECIALCARGONEEDCEO)
+            util.yield(200)
+            return
+        end
 
-            local ids = {maxsellcargo, nobuycdcargo, nosellcdcargo, autocompletespecialbuy, autocompletespecialsell}
-            for i, id in ipairs(ids) do
-                if not menu.get_value(id) then
-                    menu.set_value(id, 1)
-                end
-            end
+        local stat_amount = GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) or 0
+        SetGlobalInt(GetSpecialCargoCrateAmountOffset(Selected_Warehouse), stat_amount or 0)
 
-            if not IsInOrg() then
-                RegisterAsCEO()
-                util.yield()
-            elseif GetOrgType() == 1 then
-                util.toast(MenuLabels.SPECIALCARGONEEDCEO)
-                util.yield(200)
-                return
-            end
+        if GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) == 0 then
+            util.toast("Out of crates") --! needs a label
+            TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
+            SpecialCargoSourceNow()
+            -----------------------------
+            -- This may or may not "out of crates" bugs
+            SetSpecialCargoCrateAmount(Selected_Warehouse, GetSpecialCargoCrateAmountFromStat(Selected_Warehouse))
+            -----------------------------
+            SetPlayerInOrgWork(-1)
+            util.yield(200)
+        else
+            if GetPlayerInOrgWork() == -1 and OpenWarehouseScreen() then
+                if StartSellMission() then
+                    local count = 0
+                    local crates = GetSpecialCargoCrateAmountFromStat(Selected_Warehouse)
+                    local crates2 = GetSpecialCargoCrateAmount(Selected_Warehouse)
+                    while crates == GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) or crates2 == GetSpecialCargoCrateAmount(Selected_Warehouse) do
+                        count += 1
 
-            if GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) == 0 then
-                util.toast("You have no crates, lets buy some", TOAST_ALL)
-                for i = 1, WarehousePropertyInfo[GetWarehousePropertyFromSlot(Selected_Warehouse)].capacity, 3 do
-                    if not menu.get_value(scafkloop) then
-                        return
-                    end
-
-                    local crates = GetSpecialCargoCrateAmount(Selected_Warehouse)
-                    OpenTerrorbyteScreen() util.yield(2250) -- wait for screen to finish animation
-                    SpecialCargoEZBuy() util.yield() -- set the EZ Buy values
-                    PAD._SET_CURSOR_LOCATION(0.75, 0.2) util.yield(100) -- Set mouse on category
-                    PressEnterOnScaleform() util.yield(50) -- click category
-                    PressEnterOnScaleform() util.yield(50) -- click number of crates (same position)
-
-                    PAD._SET_CURSOR_LOCATION(0.6, 0.6) util.yield() -- move mouse to confirm option
-                    PressEnterOnScaleform() util.yield() -- click confirm
-
-                    while crates == GetSpecialCargoCrateAmount(Selected_Warehouse) do
-                        util.yield()
-                    end
-
-                    SetPlayerInOrgWork(-1)
-                end
-            else
-
-                if GetPlayerInOrgWork() == -1 and OpenWarehouseScreen() then
-                    util.yield_x(2)
-                    if StartSellMission() then
-                        -- Wait for crates stat to change
-                        local count = 0
-                        local crates = GetSpecialCargoCrateAmountFromStat(Selected_Warehouse)
-                        while crates == GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) do
-                            count += 1
-                            if count > 3000 then util.toast("stuck waiting") return end
-                            util.toast("Waiting on stat to change")
-                            util.yield()
+                        if count > 100 then
+                            util.toast("stuck waiting")
+                            PressBackOnScaleform()
+                            return
                         end
-                        util.yield_x(2)
+
+                        util.toast("Waiting...")
+                        util.yield(100)
                     end
+                    util.yield_x(2)
                 end
-
             end
-        end)
+        end
+    end)
 
-        menu.action(SCMan, "[DEBUG] Cancel Org Work", {}, "", function()
-            if IsInSession() then
-                SetPlayerInOrgWork(-1)
-            end
-        end)
-    end --]]
+    --#region NON_RELEASE_VERSION
+        if not IS_RELEASE_VERSION then
+
+            menu.action(SCMan, "Trigger Technician Source", {"triggerscsource"}, "", function()
+                SpecialCargoSourceNow()
+            end)
+        end
     --#endregion NON_RELEASE_VERSION 
 end
 
-menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOMAXCRATESOURCE, {}, MenuLabels.SPECIALCARGOMAXCRATESOURCE_DESC, function()
+SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOMAXCRATESOURCE, {}, MenuLabels.SPECIALCARGOMAXCRATESOURCE_DESC, function()
     if remote.killswitches.specialcargo then
         util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
         util.stop_thread()
@@ -1968,12 +1991,12 @@ menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOMAXCRATESOURCE, {}, MenuLabels.SP
         local warehouse_property_info = WarehousePropertyInfo[GetWarehousePropertyFromSlot(Selected_Warehouse)]
         if warehouse_property_info then
             local capacity = warehouse_property_info.capacity
-            SetGlobalInt(globals.SpecialCargoDeliveryCrates, capacity - crate_amount)
+            SetGlobalInt(globals.SpecialCargoDeliveryCrates, capacity - 1)
         end
     end
 end)
 
-menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOSETDELIVERTIME, {}, MenuLabels.SPECIALCARGOSETDELIVERTIME_DESC, function()
+SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOSETDELIVERTIME, {}, MenuLabels.SPECIALCARGOSETDELIVERTIME_DESC, function()
     if remote.killswitches.specialcargo then
         util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
         SetGlobalInt(globals.SpecialCargoDeliveryTime, 48)
@@ -1985,10 +2008,7 @@ menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOSETDELIVERTIME, {}, MenuLabels.SP
         SetGlobalInt(globals.SpecialCargoDeliveryTime, 0)
     end
 end)
-
-----------------------------------
--- End Special Cargo Shit
-----------------------------------
+--#endregion Special Cargo Shit
 
 ----------------------------------
 -- Nightclub Shit
@@ -2002,7 +2022,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
             if property ~= 0 and IsInSession() then
                 local coords = NightclubPropertyInfo[property].coords
                 if LoadArea(coords) then
-                    SetEntityCoords(PLAYER.PLAYER_PED_ID(), coords)
+                    SetEntityCoords(PLAYER_PLAYER_PED_ID(), coords)
                 end
             end
         end
@@ -2075,6 +2095,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         end)
 
         -- if not IS_RELEASE_VERSION then
+        --!     this was probably patched by rockstar? cant be arsed to fix this, nobody really used it anyways?
         --     menu.click_slider(list, "[DEBUG] " .. MenuLabels.SETPRODUCT, {"setproducthub"..name}, MenuLabels.SETPRODUCT_DESC, 0, GetGlobalInt(globals.Hub[name].Cap), GetGlobalInt(globals.Hub[name].Cap), 1, function(value) --! implement default values for set product limits
         --         if IsInSession() then
         --             SetHubValueFromSlot(index, value)
@@ -2095,22 +2116,25 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                 util.draw_debug_text(GetLabelText(MenuLabels.INFO_NCSAFE, safeval))
             end
         end)
+
         menu.action(NCSafe, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.NIGHTCLUBSAFE), {"tpncsafe"}, GetLabelText(MenuLabels.TELEPORTTO_DESC, MenuLabels.NIGHTCLUBSAFE), function()
             if IsInSession() then
                 if IsPlayerInNightclub() then
-                    SetEntityCoords(PLAYER.PLAYER_PED_ID(), {x = -1615.7667, y = -3015.757, z = -75.20507})
+                    SetEntityCoords(PLAYER_PLAYER_PED_ID(), NCSafePos)
                 else
                     util.toast(MenuLabels.NOTINNIGHTCLUB_TOAST)
                     menu.trigger_commands("tpnightclub")
                 end
             end
         end)
+
         menu.action(NCSafe, MenuLabels.NCMAXPOPULARITY, {"resupplyncsafe"}, MenuLabels.NCMAXPOPULARITY_DESC, function()
             if IsInSession() then
                 menu.trigger_commands("clubpopularity 100")
                 util.toast(MenuLabels.NCMAXPOPULARITY_TOAST)
             end
         end)
+
         menu.action(NCSafe, MenuLabels.TRIGGERPRODUCTION, {"triggerncsafe"}, MenuLabels.TRIGGERPRODUCTION_DESC, function()
             if IsInSession() then
                 if SetNightclubPayTimeLeft(-1) then
@@ -2118,6 +2142,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                 end
             end
         end)
+
         menu.click_slider(NCSafe, MenuLabels.MAXIMUMCAPACITY, {"setcapncsafe"}, MenuLabels.MAXIMUMCAPACITY_DESC, 1, 300000, 210000, 10000, function(value)
             if IsInSession() then
                 local address = memory.script_global(globals.SafeCap)
@@ -2125,6 +2150,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                 util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
             end
         end)
+
         menu.click_slider(NCSafe, MenuLabels.NCREVENUE, {"revenuencsafe"}, MenuLabels.NCREVENUE_DESC, 1, 300000, 50000, 10000, function(value)
             if IsInSession() then
                 for i = 1, 20 do
@@ -2164,8 +2190,8 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                     end
                 end
 
-                local MyPed = PLAYER.PLAYER_PED_ID()
-                ENTITY.FREEZE_ENTITY_POSITION(MyPed, true)
+                local MyPed = PLAYER_PLAYER_PED_ID()
+                ENTITY_FREEZE_ENTITY_POSITION(MyPed, true)
 
                 local ValueBeforeAdding = GetSafeCashValueFromStat()
 
@@ -2235,40 +2261,41 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                 util.yield()
             end
         end, function()
-            ENTITY.FREEZE_ENTITY_POSITION(PLAYER.PLAYER_PED_ID(), false)
+            ENTITY_FREEZE_ENTITY_POSITION(PLAYER_PLAYER_PED_ID(), false)
             if remote.killswitches.safeloop then
                 return
             end
-            SetEntityCoords(PLAYER.PLAYER_PED_ID(), {x = -1615.86, y = -3015.5, z = -75.2})
+            SetEntityCoords(PLAYER_PLAYER_PED_ID(), {x = -1615.86, y = -3015.5, z = -75.2})
         end)
+
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPDELAY, {"ncafkloopdelay"}, MenuLabels.NCSAFELOOPDELAY_DESC, 0, 100000, NCSafeLoopDelay, 100, function(peepeepoopoo)
-            NCSafeLoopDelay = peepeepoopoo
+            NCSafeLoopDelay = peepeepoopoo -- clever
             util.toast(MenuLabels.NCSAFELOOPDELAY_TOAST)
         end)
+
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT, {"ncafktransactiontimeout"}, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT_DESC, 1000, NCSafeLoopTransactionTimeout, NCSafeLoopTransactionTimeout, 100, function(peepeepoopoo)
-            NCSafeLoopTransactionTimeout = peepeepoopoo
+            NCSafeLoopTransactionTimeout = peepeepoopoo -- clever
             util.toast(MenuLabels.NCSAFELOOPTIMEOUTMODIFIED_TOAST)
         end)
+
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPSTOP, {"ncafkamount"}, MenuLabels.NCSAFELOOPSTOP_DESC, 0, 999999999, 0, 300000, function(value)
             NCSafeLoopUserLimit = value
             util.toast(MenuLabels.NCSAFELOOPSTOP_TOAST)
         end)
+
         menu.action(NCSafe, MenuLabels.NCRESETSAFEVALUE, {}, MenuLabels.NCRESETSAFEVALUE_DESC, FixNCSafe)
 
-        -- if not IS_RELEASE_VERSION then
-        --     menu.action(NCSafe, "[DEBUG] Fuck The Safe", {}, "", function()
-        --         TriggerNCSafeAddMoneyTransaction(300000, true)
-        --     end)
+        if not IS_RELEASE_VERSION then
+            menu.action(NCSafe, "[DEBUG] Fuck The Safe", {}, "", function()
+                TriggerNCSafeAddMoneyTransaction(300000, true)
+            end)
 
-        --     menu.toggle(NCSafe, "[DEBUG] Disable Rendering", {}, "", function(toggle)
-        --         GRAPHICS.TOGGLE_PAUSED_RENDERPHASES(not toggle)
-        --         GRAPHICS.DONT_RENDER_IN_GAME_UI(toggle)
-        --     end)
-        -- end
+            menu.toggle(NCSafe, "[DEBUG] Disable Rendering", {}, "", function(toggle)
+                GRAPHICS.TOGGLE_PAUSED_RENDERPHASES(not toggle)
+                GRAPHICS.DONT_RENDER_IN_GAME_UI(toggle)
+            end)
+        end
 --#endregion Nightclub Shit
---------------------------
--- End of NightClub Shit
---------------------------
 
 ----------------------------------
 -- MC Club Shit
@@ -2283,9 +2310,23 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
         end
     end)
 
+    if not IS_RELEASE_VERSION and not IS_BETA_VERSION then
+        menu.toggle_loop(MCMan, "[DEBUG] Autocomplete Sell Mission", {}, "This doesnt work too well lol", function()
+            if GetLocalInt(locals.MCSellScriptString, 696) then
+                util.toast("Script is running")
+                if GetLocalInt(locals.MCSellScriptString, locals.MCEZMissionStarted) then
+                    util.toast("mission started, waiting 30 secs")
+                    util.yield(30000)
+                    SetLocalInt(locals.MCSellScriptString, locals.MCEZMissionStarted, 1)
+                else
+                    util.toast(GetLocalInt(locals.MCSellScriptString, locals.MCEZMissionStarted))
+                end
+            end
+        end)
+    end
+
     -- Generate MC Business options
     for index = 0, 4 do
-        --local name = MCBusinessTypesInOrder[index]
         local name = MCBusinessTypesOrderedWithLabels[index].name
         local label = MCBusinessTypesOrderedWithLabels[index].label
         
@@ -2341,7 +2382,7 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
                 util.toast(MenuLabels.MAXPRODUCTIONSPEED_TOAST)
             end
             while var do
-                SetGlobalInt(globals.MC[name].ProSpd1, 1000)
+                SetGlobalInt(globals.MC[name].ProSpd1, 500)
                 util.yield()
             end
             SetGlobalInt(globals.MC[name].ProSpd1, globals.MC[name].ProSpd1DefaultValue)
@@ -2354,12 +2395,14 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
                 util.toast(MenuLabels.SUPPLYPRODUCTRATIO_TOAST)
             end
         end)
+
         menu.click_slider(list, MenuLabels.MAXIMUMCAPACITY, {"setcap"..name}, MenuLabels.MAXIMUMCAPACITY_DESC, 1, 999, globals.MC[name].CapDefaultValue, 1, function(value)
             if IsInSession() then
                 SetGlobalInt(globals.MC[name].Cap, value)
                 util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
             end
         end)
+
         menu.action(list, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.BUSINESS), {"tpbusiness"..name}, GetLabelText(MenuLabels.TELEPORTTO_DESC, MenuLabels.BUSINESS), function()
             if IsInSession() then
                 TeleportToMCProperty(MyBusinesses[name].property)
@@ -2367,9 +2410,6 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
         end)
     end
 --#endregion MC Club Shit
---------------------------
--- End of MC Shit
---------------------------
 
 --------------------------
 -- Bunker Shit
@@ -2421,6 +2461,7 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
             end
         end
     end)
+
     menu.toggle_loop(BunkMan, MenuLabels.MAXSELLPRICE, {"maxsellbunker"}, GetLabelText(MenuLabels.MAXSELLPRICE_DESC, MenuLabels.PRODUCT, MenuLabels.PRODUCT), function()
         if remote.killswitches.maxsellprice then
             util.toast(MenuLabels.KILLSWITCH_MAXSELLPRICE)
@@ -2441,6 +2482,7 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
         SetGlobalInt(globals.MC.Bunker.Sell1, globals.MC.Bunker.Sell1DefaultValue)
         SetGlobalFloat(globals.MC.Bunker.Sell2, globals.MC.Bunker.Sell2DefaultValue)
     end)
+
     local BunkProSpdVar
     menu.toggle(BunkMan, MenuLabels.MAXPRODUCTIONSPEED, {"maxprodbunker"}, MenuLabels.MCMAXPRODUCTIONSPEED_DESC, function(peepeepoopoo)
         BunkProSpdVar = peepeepoopoo
@@ -2461,6 +2503,7 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
             util.yield()
         end
     end)
+
     menu.click_slider(BunkMan, MenuLabels.SUPPLYPRODUCTRATIO, {"ratiobunker"}, MenuLabels.SUPPLYPRODUCTRATIO_DESC, 1, 10, 10, 1, function(value)
         if IsInSession() then
             SetGlobalInt(globals.MC.Bunker.Ratio1, value) -- no upgrade
@@ -2468,196 +2511,85 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
             util.toast(MenuLabels.SUPPLYPRODUCTRATIO_TOAST)
         end
     end)
+
     menu.click_slider(BunkMan, MenuLabels.MAXIMUMCAPACITY, {"setcapbunker"}, MenuLabels.MAXIMUMCAPACITY_DESC, 1, 999, 100, 1, function(value)
         if IsInSession() then
             SetGlobalInt(globals.MC.Bunker.Cap, value)
             util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
         end
     end)
+
     menu.action(BunkMan, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.BUNKER), {"tpbunker"}, GetLabelText(MenuLabels.TELEPORTTO_DESC, MenuLabels.BUNKER), function()
         TeleportToMCProperty(MyBusinesses.Bunker.property)
     end)
 --#endregion Bunker Shit
---------------------------
--- End Bunker Shit
---------------------------
-
---------------------------
--- Arcade Shit -- 1.61
---------------------------
---[[ local ArcadeMan = menu.list(menu.my_root(), "[DEBUG] Arcade")
-    menu.toggle_loop(ArcadeMan, "[DEBUG] " .. MenuLabels.MONITOR, {}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.MONEY, "Arcade" , MenuLabels.INFOOVERLAY), function()
-        if IsInSession() then
-            local value = GetGlobalInt(1853348 + 1 + (players.user() * 834) + 267 + 408 + 5)
-            local value_stat = GetStatInt(prefix .. "ARCADE_SAFE_CASH_VALUE")
-            local str = string.format(
-                "Arcade Value (Global): %i"
-                .. "\n" ..
-                "Arcade Value (Stat): %i",
-                value, value_stat
-            )
-        end
-    end)
-    menu.action(ArcadeMan, "[DEBUG] " .. "Trigger Arcade Safe Transaction", {}, "", function()
-    
-    end) 
-
-
-    --SetGlobalInt(1853348 + 1 + (players.user() * 834) + 267 + 408 + 5, 20000)
-
-    --SetStatInt(prefix.. "ARCADE_PAY_TIME_LEFT", 0) -- time until pay
-    --SetLocalInt("freemode", 19202+1+2, 2147483647) -- transaction amount
-    --SetLocalInt("freemode", 19202+1+3, 0) -- transaction status
-    --ClearGlobalBits(1640767, 0, 1, 2) -- unknown
-
-    --util.draw_debug_text("Debug Shit: " .. "Arcade Safe Value: " .. GetStatInt("mp0_arcade_safe_cash_value"))
-    --util.draw_debug_text("Debug Shit: " .. "Arcade Safe Transaction Status: " .. IntToBitString(GetGlobalInt(1640767)))
-    --util.draw_debug_text("Debug Shit: " .. "Arcade Safe Transaction Value1: " .. value1)
-    --util.draw_debug_text("Debug Shit: " .. "Arcade Safe Transaction Value2: " .. value2)]]
---------------------------
--- End Arcade Shit
---------------------------
-
---------------------------
--- Hangar Shit -- these offsets are all outdated, not to mention this shit is stupid asf so im commenting it out.
---------------------------
---[[ local HangMan = menu.list(menu.my_root(), "Hangar Cargo [WIP]", {}, "Note that sell values cap out at $3m (I think)", function() end)
-    menu.action(HangMan, "Bypass Cooldowns", {}, "Works on Source CD, but for some reason not sell >:(", function()
-        local address = {
-            [1] = memory.script_global(tunables_global+22433), -- Tobacco/Alcohol, counterfeit goods. default val: 120000
-            [2] = memory.script_global(tunables_global+22434), -- Animal Materials, Art, Jewelry. default val: 180000
-            [3] = memory.script_global(tunables_global+22435), -- Narcotics, Chemicals, Medical Supplies. default val: 240000
-            [4] = memory.script_global(tunables_global+22472), -- Sell cooldown. default val: 180000
-            [5] = memory.script_global(tunables_global+22436), -- Additional Time per Player. default val: 60000
-        }
-        for i = 1, #address do
-            memory.write_int(address[i], 0)
-        end
-    end)
-
-    menu.action(HangMan, "Scam Ron out of his cut", {"scamron"}, "What did he even do, anyway?", function()
-        local address = memory.script_global(tunables_global+22561)
-        memory.write_int(address, 0)
-        util.toast("Ron is gonna get scammed from now on. Change sessions to revert.")
-    end)
-
-    local AllHang = menu.list(HangMan, "All/Mixed Cargo", {}, "", function() end)
-        menu.click_slider(AllHang, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-        local address = memory.script_global(tunables_global+22578)
-        memory.write_int(address, value)
-    end)
-
-    local Narco = menu.list(HangMan, "Narcotics", {}, "", function() end)
-        menu.click_slider(Narco, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-       local address = memory.script_global(tunables_global+22585)
-       memory.write_int(address, value)
-        end)
-
-    local Chem = menu.list(HangMan, "Chemicals", {}, "", function() end)
-        menu.click_slider(Chem, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22581)
-            memory.write_int(address, value)
-        end)
-
-    local Meds = menu.list(HangMan, "Medical Supplies", {}, "", function() end)
-        menu.click_slider(Meds, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22584)
-            memory.write_int(address, value)
-        end)
-
-    local Animals = menu.list(HangMan, "Animal Materials", {}, "", function() end)
-        menu.click_slider(Animals, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22579)
-            memory.write_int(address, value)
-        end)
-
-    local Art = menu.list(HangMan, "Art and Antiques", {}, "", function() end)
-        menu.click_slider(Art, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22580)
-            memory.write_int(address, value)
-        end)
-
-    local Jewelry = menu.list(HangMan, "Jewelry and Gemstones", {}, "", function() end)
-        menu.click_slider(Jewelry, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22583)
-            memory.write_int(address, value)
-        end)
-
-    local Tobacco = menu.list(HangMan, "Tobacco and Alcohol", {}, "", function() end)
-        menu.click_slider(Tobacco, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22586)
-            memory.write_int(address, value)
-        end)
-
-    local Counterfeit = menu.list(HangMan, "Counterfeit Goods", {}, "", function() end)
-        menu.click_slider(Counterfeit, "Sell Value multiplier", {}, "Changes the unit multiplier of the specified good.\nDefault value: 10000", 1, 2999999, 100000, 100000, function(value)
-            local address = memory.script_global(tunables_global+22582)
-            memory.write_int(address, value)
-        end)
-]]
---------------------------
--- End Hangar Shit
---------------------------
-
---------------------------
--- Payphone Shit
---------------------------
---[[ local PayphoneMan = menu.list(menu.my_root(), "Payphone Hit Manager [WIP]", {}, "coming soon to a ban near you ;)", function() end)
-
-menu.action(PayphoneMan, "Soon:tm:", {}, "", function()
-end)
-]]
---------------------------
--- End Payphone Shit
---------------------------
-
 
 --------------------------
 -- Debug Shit
 --------------------------
--- if not IS_RELEASE_VERSION then
---     local MBDebug = menu.list(menu.my_root(), "Debug Shit", {"mbdebug"})
---     local MBDebug_MC = menu.list(MBDebug, "MC Shit", {"mbdebugmc"})
---     for i = 0, 5 do
---         --local type = MCBusinessTypesInOrder[i]
---         local type = MCBusinessTypesOrderedWithLabels[i].name
---         local label = MCBusinessTypesOrderedWithLabels[i].label
+if not IS_RELEASE_VERSION then
+    local MBDebug = menu.list(menu.my_root(), "Debug Shit", {"mbdebug"})
+    local MBDebug_MC = menu.list(MBDebug, "MC Shit", {"mbdebugmc"})
+    for i = 0, 5 do
+        --local type = MCBusinessTypesInOrder[i]
+        local type = MCBusinessTypesOrderedWithLabels[i].name
+        local label = MCBusinessTypesOrderedWithLabels[i].label
 
---         local thislist = menu.list(MBDebug_MC, label, {"mbdebugmc"..type})
---         RegisterUpdatingReadOnlyCommand(thislist, "Slot "        , function() return MyBusinesses[type].slot end)
---         RegisterUpdatingReadOnlyCommand(thislist, "Property "    , function() return MyBusinesses[type].property end)
---         RegisterUpdatingReadOnlyCommand(thislist, "Product "     , function()
---             return MyBusinesses[type].product --.. "/" .. (GetGlobalInt(globals.MC[type].Cap) or 0)
---         end)
---         RegisterUpdatingReadOnlyCommand(thislist, "Supplies "    , function() return MyBusinesses[type].supplies end)
---         menu.action(thislist, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.BUSINESS), {}, GetLabelText(MenuLabels.TELEPORTTO_DESC, MenuLabels.BUSINESS), function()
---             local coords = MCBusinessPropertyInfo[MyBusinesses[type].property].coords
---             if coords then
---                 if LoadArea(coords) then
---                     SetEntityCoords(PLAYER.PLAYER_PED_ID(), coords)
---                 end
---             else
---                 util.toast("You do not have a "..type)
---             end
---         end)
---     end
+        local thislist = menu.list(MBDebug_MC, label, {"mbdebugmc"..type})
+        RegisterUpdatingReadOnlyCommand(thislist, "Slot"        , function() return MyBusinesses[type].slot end)
+        RegisterUpdatingReadOnlyCommand(thislist, "Property"    , function() return MyBusinesses[type].property end)
+        RegisterUpdatingReadOnlyCommand(thislist, "Product"     , function()
+            return MyBusinesses[type].product
+        end)
+        RegisterUpdatingReadOnlyCommand(thislist, "Supplies "    , function() return MyBusinesses[type].supplies end)
+        menu.action(thislist, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.BUSINESS), {}, GetLabelText(MenuLabels.TELEPORTTO_DESC, MenuLabels.BUSINESS), function()
+            local coords = MCBusinessPropertyInfo[MyBusinesses[type].property].coords
+            if coords then
+                if LoadArea(coords) then
+                    SetEntityCoords(PLAYER_PLAYER_PED_ID(), coords)
+                end
+            else
+                util.toast("You do not have a "..type)
+            end
+        end)
+    end
 
---     local MBDebug_NC = menu.list(MBDebug, "NC Shit", {"mbdebugnc"})
---     for i = 0, #HubTypesOrderedWithLabels do
---         local name = HubTypesOrderedWithLabels[i].name
---         local label = HubTypesOrderedWithLabels[i].label
---         local thislist = menu.list(MBDebug_NC, label, {"mbdebugnc"..name})
---         --local thislist = RegisterUpdatingListCommand(MBDebug_NC, type, function() return string.format("Product: %i\nCapacity: %i", MyBusinesses.Hub[type], GetGlobalInt(globals.Hub[HubTypesInOrder[i]].Cap)) end)
---         RegisterUpdatingReadOnlyCommand(thislist, "Product "     ,  function() return MyBusinesses.Hub[name] end)
---         RegisterUpdatingReadOnlyCommand(thislist, "Capacity "     , function() return GetGlobalInt(globals.Hub[name].Cap) end)
---     end
---     menu.click_slider(MBDebug_NC, "Set Product All", {}, "Will not put it over your cap", 0, 100, 0, 1, function(value)
---         for i = 0, #HubTypesOrderedWithLabels do
---             local cap = GetGlobalInt(globals.Hub[HubTypesOrderedWithLabels[i].name].Cap)
---             SetGlobalInt(GetHubValueOffsetFromSlot(i), value > cap and cap or value)
---         end
---     end)
--- end
+    local MBDebug_NC = menu.list(MBDebug, "NC Shit", {"mbdebugnc"})
+    for i = 0, #HubTypesOrderedWithLabels do
+        local name = HubTypesOrderedWithLabels[i].name
+        local label = HubTypesOrderedWithLabels[i].label
+        local thislist = menu.list(MBDebug_NC, label, {"mbdebugnc"..name})
+        RegisterUpdatingReadOnlyCommand(thislist, "Product"     ,  function() return MyBusinesses.Hub[name] end)
+        RegisterUpdatingReadOnlyCommand(thislist, "Capacity"     , function() return GetGlobalInt(globals.Hub[name].Cap) end)
+    end
+    menu.click_slider(MBDebug_NC, "Set Product All", {}, "Will not put it over your cap", 0, 100, 0, 1, function(value)
+        for i = 0, #HubTypesOrderedWithLabels do
+            local cap = GetGlobalInt(globals.Hub[HubTypesOrderedWithLabels[i].name].Cap)
+            SetGlobalInt(GetHubValueOffsetFromSlot(i), value > cap and cap or value)
+        end
+    end)
+
+    local MBDebug_CEO = menu.list(MBDebug, "CEO Shit", {"mbdebugceo"})
+    for slot = 0, 4 do
+        local property_id = GetWarehousePropertyFromSlot(slot)
+        if property_id ~= 0 then
+            local property_name = WarehousePropertyInfo[property_id].name
+            MenuCurrentWarehouses[slot] = {property_name, {"warehouse"..property_name}, ""}
+        else
+            MenuCurrentWarehouses[slot] = {MenuLabels.SPECIALCARGONOWAREHOUSE, {"warehouse".."invalid"}, MenuLabels.SPECIALCARGONOWAREHOUSE_DESC}
+        end
+    end
+
+    for slot = 0, 4 do
+        local warehouse_list = menu.list(MBDebug_CEO, "Slot "..slot)
+        RegisterUpdatingReadOnlyCommand(warehouse_list, "Property",        function() return MenuCurrentWarehouses[slot][4] or "" end)
+        RegisterUpdatingReadOnlyCommand(warehouse_list, "Property Name",   function() return MenuCurrentWarehouses[slot][1] end)
+        RegisterUpdatingReadOnlyCommand(warehouse_list, "Crates Global",   function() return GetGlobalInt(GetSpecialCargoCrateAmountOffset(slot)) end)
+        RegisterUpdatingReadOnlyCommand(warehouse_list, "Crates Stat",     function() return GetSpecialCargoCrateAmountFromStat(slot) end)
+    end
+
+    --menu.action(MBDebug_CEO, "Sync Globals With Stats")
+end
 --------------------------
 -- End Debug Shit
 --------------------------
@@ -2672,7 +2604,7 @@ util.create_tick_handler(function()
             local property_id = GetWarehousePropertyFromSlot(slot)
             if property_id ~= 0 then
                 local property_name = WarehousePropertyInfo[property_id].name
-                MenuCurrentWarehouses[slot] = {property_name, {"warehouse"..property_name}, ""}
+                MenuCurrentWarehouses[slot] = {property_name, {"warehouse"..property_name}, "", property_id}
             else
                 MenuCurrentWarehouses[slot] = {MenuLabels.SPECIALCARGONOWAREHOUSE, {"warehouse".."invalid"}, MenuLabels.SPECIALCARGONOWAREHOUSE_DESC}
             end
@@ -2688,7 +2620,7 @@ end)
 menu.hyperlink(menu.my_root(), MenuLabels.JOINDISCORD, "https://discord.gg/mmxWwc5FCC")
 menu.action(menu.my_root(), MenuLabels.SHOWMOTD, {}, tostring(THIS_RELEASE_VERSION) .. " / " .. remote.version, function()
     if remote.motd == "" then
-        --util.toast(MenuLabels.SHOWMOTDBLANK_TOAST) -- unnecessary
+        util.toast(MenuLabels.SHOWMOTDBLANK_TOAST)
     else
         util.toast(GetLabelText(MenuLabels.PREFIX_MOTD, remote.motd))
     end
