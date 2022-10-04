@@ -960,13 +960,6 @@ local function HandleHTTPResponse(response)
     if not IGNORE_VERSION_DIFFERENCE and IS_RELEASE_VERSION and not VersionCheck(THIS_RELEASE_VERSION, remote.version) then
         util.toast(MenuLabels.SCRIPTOUTOFDATE, TOAST_ALL)
     end
-
-    if MOTD ~= remote.motd then
-        MOTD = remote.motd
-        if MOTD ~= "" then
-            util.toast(GetLabelText(MenuLabels.PREFIX_MOTD, MOTD), TOAST_ALL) -- yeah i cant really think of a good way to only show this only after the script is "started". and a script "start" is a loose term here, so im going to base it on clicking the start button and thats it. any further input made by the user then causes those toasts to appear.
-        end
-    end
 end
 
 local function HTTPGiveUp()
