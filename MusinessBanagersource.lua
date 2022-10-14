@@ -114,8 +114,6 @@ local MenuLabels = {
 	FINDSAFERWAYS_DESC="Please at least read this before proceeding with the money options found below",
 	RETREIVINGINFO="Retreiving Info...",
 
-	SALESABUSE_DIVIDER="Sales Abuse",
-
 	MAXSELLPRICE="Max Sell Price",
 	MAXSELLPRICE_DESC="Sell your {1} for the maximum possible price no matter how much {2} you have",
 	--! {1} and {2} are the same, and may be one of the following: [STOCK], [SUPPLIES], or [PRODUCT]
@@ -1612,8 +1610,6 @@ end
 ----------------------------------
 -- Start of menu options
 ----------------------------------
-
-menu.divider(menu.my_root(), MenuLabels.SALESABUSE_DIVIDER)
 
 ----------------------------------
 -- Special Cargo Shit
