@@ -685,7 +685,7 @@ local I32_MAX = 2147483647
 local function ReplacePlaceholder(str, rep, num)
     local b, e = str:find("{"..num.."}")
     if b and e then
-        return (str:sub(0, b-1) .. rep .. str:sub(e+1, -1))
+        return (str:sub(0, b-1) .. lang.get_string(rep) .. str:sub(e+1, -1))
     else
         util.log(string.format("Expected {%i} Placeholder in: %s", num, str))
         return str
@@ -702,7 +702,7 @@ local function GetLabelText(label, ...)
     -- Note: NUMBER OF ARGS GIVEN TO FUNCTION AND ARGS IN LABEL MUST MATCH!
     -- Note: EMPTY ARGS OR DUPLICATE ARGS IN LABEL IS UNDEFINED BEHAVIOUR!
     local args = {...}
-    local str = label
+    local str = lang.get_string(label)
     for i = 1, #args do
         str = ReplacePlaceholder(str, args[i], i)
     end
@@ -826,6 +826,10 @@ local function TranslateLabels(language)
     end
 end
 
+for k, v in MenuLabels do
+    MenuLabels[k] = lang.register(v)
+end
+
 local Languages = {
     [1] = {"EN - English", {"en"}, ""},
 }
@@ -858,7 +862,7 @@ end
 
 local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
 if not SCRIPT_SILENT_START then
-	util.toast(MenuLabels.WARNINGRISKY_TOAST)
+    util.toast(lang.get_string(MenuLabels.WARNINGRISKY_TOAST))
 end
 
 -----------------------------------
