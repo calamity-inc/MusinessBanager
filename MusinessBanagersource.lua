@@ -796,16 +796,7 @@ local function GetTranslationFileMetadata(path)
 end
 
 ---@param language table|string
-local function TranslateLabels(language)
-    local path
-    if type(language) == "table" then
-        path = language["path"]
-    elseif type(language) == "string" then
-        path = language
-    else
-        error("TranslateLabels was not given a valid type!")
-    end
-
+local function TranslateLabels(path)
     local lvalue, rvalue
     for line in io.lines(path) do
         local first_char = GetCharacterFromString(line, 1)
@@ -829,33 +820,13 @@ for k, v in MenuLabels do
     MenuLabels[k] = lang.register(v)
 end
 
-local Languages = {
-    [1] = {"EN - English", {"en"}, ""},
-}
-
-if not filesystem.exists(MB_TRANSLATIONS_DIR) then
-    filesystem.mkdirs(MB_TRANSLATIONS_DIR)
-end
-
-local dirlen = string.len(MB_TRANSLATIONS_DIR)
-for index, filepath in ipairs(filesystem.list_files(MB_TRANSLATIONS_DIR)) do
-    local success, metadata = GetTranslationFileMetadata(filepath) -- stuff like version, creator, etc.
-    local filename = filepath:sub(dirlen + 1, -5):gsub("_", " ") -- transforms "_" to " ", because discord is stinky and replaces spaces with "_".
-    local langcode = string.match(filename, "([%a-]+) - ")
-    local author  = (success and metadata.Author ~= nil)  and "Author: " .. metadata.Author or "No author"
-    local version = (success and metadata.Version ~= nil) and metadata.Version or "0.0.0"
-    local uptodate, ood_msg
-
-    if success and metadata.Version ~= nil then
-        uptodate, ood_msg = VersionCheck(version, THIS_RELEASE_VERSION)
-    else
-        uptodate, ood_msg = false, "no msg"
+do
+    local l = lang.get_current()
+    local path = MB_TRANSLATIONS_DIR .. l .. ".txt"
+    if filesystem.exists(path) then
+       lang.set_translate(l)
+       TranslateLabels(path)
     end
-
-    Languages[#Languages+1] = {
-        filename, {langcode}, author .. "\n" .. version,
-        path = filepath, version = version, uptodate = uptodate, ood_msg = ood_msg, author = author, filename = filename, langcode = langcode,
-    }
 end
 --#endregion Translation Functions
 
