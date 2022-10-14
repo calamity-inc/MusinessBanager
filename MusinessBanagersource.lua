@@ -112,7 +112,6 @@ local MenuLabels = {
 
     FINDSAFERWAYS="Find safer ways to make money",
     FINDSAFERWAYS_DESC="Please at least read this before proceeding with the money options found below",
-    RETREIVINGINFO="Retreiving Info...",
 
     MAXSELLPRICE="Max Sell Price",
     MAXSELLPRICE_DESC="Sell your {1} for the maximum possible price no matter how much {2} you have",
@@ -1024,14 +1023,6 @@ local function HTTPHeartbeat()
     end
 end
 
-local loading_divider = menu.divider(menu.my_root(), MenuLabels.RETREIVINGINFO)
-util.create_tick_handler(HTTPHeartbeat)
-
-while not HTTP.SUCCESS and HTTP.TRIES < 4 do
-    util.yield()
-end
-
-menu.delete(loading_divider)
 --#endregion HTTP Functions
 
 -----------------------------------
