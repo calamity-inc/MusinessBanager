@@ -231,7 +231,6 @@ local MenuLabels = {
 	NOTINNIGHTCLUB_TOAST="You are not in your Nightclub!",
 
 	JOINDISCORD="Join the Discord",
-	SHOWMOTD="Show MOTD",
 	SHOWMOTDBLANK_TOAST="The MOTD is blank.",
 	WARNINGRISKY_TOAST="WARNING: All features in this script are considered risky! There is a chance you will get banned within an unknown number of days (bans are delayed randomly). You have been warned.",
 
@@ -2583,10 +2582,3 @@ util.create_tick_handler(function()
 end)
 
 menu.hyperlink(menu.my_root(), MenuLabels.JOINDISCORD, "https://discord.gg/mmxWwc5FCC")
-menu.action(menu.my_root(), MenuLabels.SHOWMOTD, {}, tostring(THIS_RELEASE_VERSION) .. " / " .. remote.version, function()
-    if remote.motd == "" then
-        util.toast(MenuLabels.SHOWMOTDBLANK_TOAST)
-    else
-        util.toast(GetLabelText(MenuLabels.PREFIX_MOTD, remote.motd))
-    end
-end)
