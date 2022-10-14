@@ -58,181 +58,181 @@ local TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME                              = functi
 --#endregion natives
 
 local MenuLabels = {
-	BUNKER="Bunker",
-	BUSINESS="Business",
-	MCBUSINESS="MC Business",
-	WAREHOUSE="Warehouse",
-	NIGHTCLUB="Nightclub",
-	NIGHTCLUBSAFE="Nightclub Safe",
-	SPECIALCARGO="Special Cargo",
-	SELLMISSION="Sell Mission",
-	BUYMISSION="Buy Mission",
-	START="Start",
-	MONEY="Money",
-	STOCK="Stock",
-	SUPPLIES="Supplies",
-	CRATES="Crates",
-	PRODUCT="Product",
-	INFOOVERLAY="Info Overlay",
-	TERRORBYTE="Terrorbyte",
-	--! STOCK, SUPPLIES, PRODUCT should all be what the game calls it, or something equivalent
-	--! You might want to leave TERRORBYTE the same, unless the game calls it something different
+    BUNKER="Bunker",
+    BUSINESS="Business",
+    MCBUSINESS="MC Business",
+    WAREHOUSE="Warehouse",
+    NIGHTCLUB="Nightclub",
+    NIGHTCLUBSAFE="Nightclub Safe",
+    SPECIALCARGO="Special Cargo",
+    SELLMISSION="Sell Mission",
+    BUYMISSION="Buy Mission",
+    START="Start",
+    MONEY="Money",
+    STOCK="Stock",
+    SUPPLIES="Supplies",
+    CRATES="Crates",
+    PRODUCT="Product",
+    INFOOVERLAY="Info Overlay",
+    TERRORBYTE="Terrorbyte",
+    --! STOCK, SUPPLIES, PRODUCT should all be what the game calls it, or something equivalent
+    --! You might want to leave TERRORBYTE the same, unless the game calls it something different
 
-	HTTPGIVEUP="Failed to establish connection to remote.",
-	HTTPINVALID="Received an invalid response from remote! This may be due to Cloudflare or your antivirus blocking the connection. Please either establish a new VPN connection, and or switch networks.",
-	HTTPFAILSAFE="Activating Killswitches due to failsafe.",
-	SCRIPTOUTOFDATE="Script is out of date! Please restart the script to get the latest from the repository!",
+    HTTPGIVEUP="Failed to establish connection to remote.",
+    HTTPINVALID="Received an invalid response from remote! This may be due to Cloudflare or your antivirus blocking the connection. Please either establish a new VPN connection, and or switch networks.",
+    HTTPFAILSAFE="Activating Killswitches due to failsafe.",
+    SCRIPTOUTOFDATE="Script is out of date! Please restart the script to get the latest from the repository!",
 
-	KILLSWITCH_SAFELOOP="Killing Nightclub Safe AFK Money Loop due to killswitch",
-	KILLSWITCH_SPECIALCARGO="Killing Special Cargo due to killswitch",
-	KILLSWITCH_MAXSELLPRICE="Killing Max Sell Price due to killswitch",
-	KILLSWITCH_AUTOCOMPLETE="Killing Auto Complete due to killswitch",
+    KILLSWITCH_SAFELOOP="Killing Nightclub Safe AFK Money Loop due to killswitch",
+    KILLSWITCH_SPECIALCARGO="Killing Special Cargo due to killswitch",
+    KILLSWITCH_MAXSELLPRICE="Killing Max Sell Price due to killswitch",
+    KILLSWITCH_AUTOCOMPLETE="Killing Auto Complete due to killswitch",
 
-	TRANSACTIONSSTUCK_TOAST="It seems that your transactions are stuck. Please switch sessions or restart the game.",
-	BEALONE_TOAST="There are too many players in your lobby! Triggering bealone",
+    TRANSACTIONSSTUCK_TOAST="It seems that your transactions are stuck. Please switch sessions or restart the game.",
+    BEALONE_TOAST="There are too many players in your lobby! Triggering bealone",
 
-	PREFIX_SAFELOOP="[Safe Loop] {1}",
-	PREFIX_SPECIALCARGO="[Special Cargo] {1}",
-	PREFIX_TOTALEARNED="Total Earned: {1}",
-	PREFIX_MOTD="MOTD: {1}",
-	--! {1} is a number, the amount of money earned in total.
-	PREFIX="{1} {2}",
-	--! This can be '[x1] x2' where x1 is the prefix, and x2 is the message. This might go unused though..
+    PREFIX_SAFELOOP="[Safe Loop] {1}",
+    PREFIX_SPECIALCARGO="[Special Cargo] {1}",
+    PREFIX_TOTALEARNED="Total Earned: {1}",
+    PREFIX_MOTD="MOTD: {1}",
+    --! {1} is a number, the amount of money earned in total.
+    PREFIX="{1} {2}",
+    --! This can be '[x1] x2' where x1 is the prefix, and x2 is the message. This might go unused though..
 
-	INFO_SCWAREHOUSE="SC Warehouse {1}: {2}/{3}",
-	--! {1} is slot {2} is amount {3} is capacity
-	INFO_HUBBUSINESS="Hub {1}: {2}/{3}",
-	--! {1} is name {2} is stock {3} is max capacity
-	INFO_NCSAFE="Nightclub Safe $: {1}",
-	--! {1} is value
-	INFO_MCBUSINESS="MC {1}: {2}% | {3}/{4}",
-	--! {1} is name {2} is supplies {3} is product {4} is capacity
-	INFO_BUNKER="Bunker: {1}% | {2}/{3}",
-	--! {1} is supplies {2} is product {3} is capacity
+    INFO_SCWAREHOUSE="SC Warehouse {1}: {2}/{3}",
+    --! {1} is slot {2} is amount {3} is capacity
+    INFO_HUBBUSINESS="Hub {1}: {2}/{3}",
+    --! {1} is name {2} is stock {3} is max capacity
+    INFO_NCSAFE="Nightclub Safe $: {1}",
+    --! {1} is value
+    INFO_MCBUSINESS="MC {1}: {2}% | {3}/{4}",
+    --! {1} is name {2} is supplies {3} is product {4} is capacity
+    INFO_BUNKER="Bunker: {1}% | {2}/{3}",
+    --! {1} is supplies {2} is product {3} is capacity
 
-	FINDSAFERWAYS="Find safer ways to make money",
-	FINDSAFERWAYS_DESC="Please at least read this before proceeding with the money options found below",
-	RETREIVINGINFO="Retreiving Info...",
+    FINDSAFERWAYS="Find safer ways to make money",
+    FINDSAFERWAYS_DESC="Please at least read this before proceeding with the money options found below",
+    RETREIVINGINFO="Retreiving Info...",
 
-	MAXSELLPRICE="Max Sell Price",
-	MAXSELLPRICE_DESC="Sell your {1} for the maximum possible price no matter how much {2} you have",
-	--! {1} and {2} are the same, and may be one of the following: [STOCK], [SUPPLIES], or [PRODUCT]
+    MAXSELLPRICE="Max Sell Price",
+    MAXSELLPRICE_DESC="Sell your {1} for the maximum possible price no matter how much {2} you have",
+    --! {1} and {2} are the same, and may be one of the following: [STOCK], [SUPPLIES], or [PRODUCT]
 
-	MONITOR="Monitor",
+    MONITOR="Monitor",
 
-	MONITOR_EXTRA="Monitor {1}",
-	MONITOR_DESC="Shows you the amount of {1} you have in your {2}, using the {3}",
-	--! {1} could be [STOCK], [SUPPLIES], [PRODUCT], or [MONEY] {2} could be [NIGHTCLUBSAFE], [BUSINESS], or [WAREHOUSE]. {3} is [INFOOVERLAY] for now, but could be changed in the future.
+    MONITOR_EXTRA="Monitor {1}",
+    MONITOR_DESC="Shows you the amount of {1} you have in your {2}, using the {3}",
+    --! {1} could be [STOCK], [SUPPLIES], [PRODUCT], or [MONEY] {2} could be [NIGHTCLUBSAFE], [BUSINESS], or [WAREHOUSE]. {3} is [INFOOVERLAY] for now, but could be changed in the future.
 
-	BYPASSCOOLDOWN="Bypass {1} Cooldown",
-	--! {1} may be one of the following: [SELLMISSION], [BUYMISSION]
-	BYPASSCOOLDOWN_DESC="Allows you to {1} another {2} without having to wait on a cooldown",
-	--! {1} is [START] for now, and {2} could be [SELLMISSION] or [BUYMISSION] for now.
+    BYPASSCOOLDOWN="Bypass {1} Cooldown",
+    --! {1} may be one of the following: [SELLMISSION], [BUYMISSION]
+    BYPASSCOOLDOWN_DESC="Allows you to {1} another {2} without having to wait on a cooldown",
+    --! {1} is [START] for now, and {2} could be [SELLMISSION] or [BUYMISSION] for now.
 
-	SETPRODUCT="Set Product",
-	SETPRODUCT_DESC="Set how much product you have directly",
-	SETPRODUCT_TOAST="Product set.",
+    SETPRODUCT="Set Product",
+    SETPRODUCT_DESC="Set how much product you have directly",
+    SETPRODUCT_TOAST="Product set.",
 
-	MAXPRODUCTALL="Max Product of All",
-	MAXPRODUCTALL_DESC="Sets all of your product amount to max",
-	MAXPRODUCTALL_TOAST="All product maxed.",
+    MAXPRODUCTALL="Max Product of All",
+    MAXPRODUCTALL_DESC="Sets all of your product amount to max",
+    MAXPRODUCTALL_TOAST="All product maxed.",
 
-	MAXPRODUCTIONSPEED="Max Production Speed",
-	MCMAXPRODUCTIONSPEED_DESC="Takes effect instantly",
-	NCMAXPRODUCTIONSPEED_DESC="Takes effect after a unit finishes producing",
-	MAXPRODUCTIONSPEED_TOAST="Production speed maxed.",
-	MAXPRODUCTIONSPEEDSLOW_TOAST="Production speed maxed. It will take effect once a good has been produced.",
+    MAXPRODUCTIONSPEED="Max Production Speed",
+    MCMAXPRODUCTIONSPEED_DESC="Takes effect instantly",
+    NCMAXPRODUCTIONSPEED_DESC="Takes effect after a unit finishes producing",
+    MAXPRODUCTIONSPEED_TOAST="Production speed maxed.",
+    MAXPRODUCTIONSPEEDSLOW_TOAST="Production speed maxed. It will take effect once a good has been produced.",
 
-	MAXIMUMCAPACITY="Maximum Capacity",
-	MAXIMUMCAPACITY_DESC="Affects how much stock you can potentially hold",
-	MAXIMUMCAPACITY_TOAST="Capacity modified.",
+    MAXIMUMCAPACITY="Maximum Capacity",
+    MAXIMUMCAPACITY_DESC="Affects how much stock you can potentially hold",
+    MAXIMUMCAPACITY_TOAST="Capacity modified.",
 
-	SUPPLYPRODUCTRATIO="Supply->Product Ratio",
-	SUPPLYPRODUCTRATIO_DESC="Sets how much supply it takes to make one product. Lower values means better efficiency",
-	SUPPLYPRODUCTRATIO_TOAST="Ratio modified.",
+    SUPPLYPRODUCTRATIO="Supply->Product Ratio",
+    SUPPLYPRODUCTRATIO_DESC="Sets how much supply it takes to make one product. Lower values means better efficiency",
+    SUPPLYPRODUCTRATIO_TOAST="Ratio modified.",
 
-	RESUPPLY="Resupply",
-	RESUPPLY_DESC="Will instantly deliver supplies to your business, free of charge",
+    RESUPPLY="Resupply",
+    RESUPPLY_DESC="Will instantly deliver supplies to your business, free of charge",
 
-	TRIGGERPRODUCTION="Trigger Production",
-	TRIGGERPRODUCTION_DESC="Puts production into effect immediately",
-	TRIGGERPRODUCTION_TOAST="Production Triggered.",
+    TRIGGERPRODUCTION="Trigger Production",
+    TRIGGERPRODUCTION_DESC="Puts production into effect immediately",
+    TRIGGERPRODUCTION_TOAST="Production Triggered.",
 
-	ENFORCEEASIESTMISSION="Enforce Easiest Sell Mission",
-	ENFORCEEASIESTMISSION_DESC="This will make sure you always get the quickest and easiest sell mission. Although, if you're too quick you may not get paid?",
+    ENFORCEEASIESTMISSION="Enforce Easiest Sell Mission",
+    ENFORCEEASIESTMISSION_DESC="This will make sure you always get the quickest and easiest sell mission. Although, if you're too quick you may not get paid?",
 
-	SPECIALCARGOLIST_DESC="Note that sell values cap out at $10m.",
+    SPECIALCARGOLIST_DESC="Note that sell values cap out at $10m.",
 
-	SPECIALCARGOWAREHOUSE_DESC="Select which warehouse to monitor and modify, since you can own five of them.",
-	SPECIALCARGOMONITOR_DESC="Displays how many special cargo crates you have in the selected warehouse",
-	SPECIALCARGONOWAREHOUSE="No Warehouse",
-	SPECIALCARGONOWAREHOUSE_DESC="You don't have a warehouse in this slot!",
-	SPECIALCARGOMAXSELLPRICE_DESC="Changes the sell price of your CEO's Special Cargo crates to $10m. Keep this enabled to ensure proper math on future sales",
-	OPENSCREEN="Open {1} Screen",
-	OPENSCREEN_DESC="Opens the {1} Screen",
-	--! {1} could be [TERRORBYTE] or [WAREHOUSE]
+    SPECIALCARGOWAREHOUSE_DESC="Select which warehouse to monitor and modify, since you can own five of them.",
+    SPECIALCARGOMONITOR_DESC="Displays how many special cargo crates you have in the selected warehouse",
+    SPECIALCARGONOWAREHOUSE="No Warehouse",
+    SPECIALCARGONOWAREHOUSE_DESC="You don't have a warehouse in this slot!",
+    SPECIALCARGOMAXSELLPRICE_DESC="Changes the sell price of your CEO's Special Cargo crates to $10m. Keep this enabled to ensure proper math on future sales",
+    OPENSCREEN="Open {1} Screen",
+    OPENSCREEN_DESC="Opens the {1} Screen",
+    --! {1} could be [TERRORBYTE] or [WAREHOUSE]
     SELLACRATE="Press To Sell A Crate",
     SELLACRATE_DESC="Automatically sells one Special Cargo Crate",
 
-	NOTINSELECTEDWAREHOUSE_TOAST="You are not at your currently selected warehouse!",
+    NOTINSELECTEDWAREHOUSE_TOAST="You are not at your currently selected warehouse!",
 
-	AUTOCOMPLETE="Autocomplete {1}",
-	AUTOCOMPLETE_DESC="Makes the {1} complete automatically",
-	--! {1} could be [SELLMISSION] or [BUYMISSION]
+    AUTOCOMPLETE="Autocomplete {1}",
+    AUTOCOMPLETE_DESC="Makes the {1} complete automatically",
+    --! {1} could be [SELLMISSION] or [BUYMISSION]
 
-	NCLIST_DESC="Note that sell values cap out at $4m.\nDO NOT attempt to 'sell all'",
-	NCREVENUE="Revenue",
-	NCREVENUE_DESC="Edits how much revenue your Nightclub gains, no matter how popular you are",
-	NCREVENUE_TOAST="Revenue set.",
+    NCLIST_DESC="Note that sell values cap out at $4m.\nDO NOT attempt to 'sell all'",
+    NCREVENUE="Revenue",
+    NCREVENUE_DESC="Edits how much revenue your Nightclub gains, no matter how popular you are",
+    NCREVENUE_TOAST="Revenue set.",
 
-	NCMAXPOPULARITY="Max Nightclub Popularity",
-	NCMAXPOPULARITY_DESC="Sets your Nightclub popularity to 100%",
-	NCMAXPOPULARITY_TOAST="Maxed Nightclub popularity.",
+    NCMAXPOPULARITY="Max Nightclub Popularity",
+    NCMAXPOPULARITY_DESC="Sets your Nightclub popularity to 100%",
+    NCMAXPOPULARITY_TOAST="Maxed Nightclub popularity.",
 
-	NCSAFELIST_DESC="",
+    NCSAFELIST_DESC="",
 
-	NCSAFELOOP="AFK Money Loop",
-	NCSAFELOOP_DESC="Open your Nightclub safe before enabling this feature!\nWill allow you to passively gain $300k every ~4-5 seconds",
+    NCSAFELOOP="AFK Money Loop",
+    NCSAFELOOP_DESC="Open your Nightclub safe before enabling this feature!\nWill allow you to passively gain $300k every ~4-5 seconds",
 
-	NCSAFELOOPDELAY="Loop Delay",
-	NCSAFELOOPDELAY_DESC="Will set how long the afk loop waits (in milliseconds) in between major steps",
-	NCSAFELOOPDELAY_TOAST="Delay modified.",
+    NCSAFELOOPDELAY="Loop Delay",
+    NCSAFELOOPDELAY_DESC="Will set how long the afk loop waits (in milliseconds) in between major steps",
+    NCSAFELOOPDELAY_TOAST="Delay modified.",
 
-	NCSAFELOOPTRANSACTIONTIMEOUT="Transaction Timeout",
-	NCSAFELOOPTRANSACTIONTIMEOUT_DESC="Sets how long to wait for a transaction to process before giving up",
-	NCSAFELOOPTIMEOUTMODIFIED_TOAST="Transaction Timeout modified.",
+    NCSAFELOOPTRANSACTIONTIMEOUT="Transaction Timeout",
+    NCSAFELOOPTRANSACTIONTIMEOUT_DESC="Sets how long to wait for a transaction to process before giving up",
+    NCSAFELOOPTIMEOUTMODIFIED_TOAST="Transaction Timeout modified.",
 
-	NCSAFELOOPSTOP="Stop Loop After $x Amount",
-	NCSAFELOOPSTOP_DESC="Will stop the AFK Money Loop after you earn the set amount",
-	NCSAFELOOPSTOP_TOAST="Limit set.",
+    NCSAFELOOPSTOP="Stop Loop After $x Amount",
+    NCSAFELOOPSTOP_DESC="Will stop the AFK Money Loop after you earn the set amount",
+    NCSAFELOOPSTOP_TOAST="Limit set.",
 
-	NCRESETSAFEVALUE="Reset Safe Value",
-	--! Referenced in [NCSAFELOOPSAFEOVERLIMIT_TOAST]
-	NCRESETSAFEVALUE_DESC="If your Nightclub Safe is above $300k or below $0 then this should fix it.",
-	NCRESETSAFEVALUEWAIT_TOAST="Please wait while your Nightclub Safe is being reset.",
-	NCRESETSAFEVALUESUCCESS_TOAST="Your Nightclub Safe should be reset now.",
-	NCRESETSAFEVALUESKIP_TOAST="Your Nightclub Safe appears to be fine",
+    NCRESETSAFEVALUE="Reset Safe Value",
+    --! Referenced in [NCSAFELOOPSAFEOVERLIMIT_TOAST]
+    NCRESETSAFEVALUE_DESC="If your Nightclub Safe is above $300k or below $0 then this should fix it.",
+    NCRESETSAFEVALUEWAIT_TOAST="Please wait while your Nightclub Safe is being reset.",
+    NCRESETSAFEVALUESUCCESS_TOAST="Your Nightclub Safe should be reset now.",
+    NCRESETSAFEVALUESKIP_TOAST="Your Nightclub Safe appears to be fine",
 
-	NCSAFELOOPMAXIMUMVALUEREACHED_TOAST="Maximum value has been reached!",
-	NCSAFELOOPNOTINNIGHTCLUB_TOAST="You don't appear to be in your Nightclub. Make sure you are in your Nightclub with the safe open before using this feature!",
-	NCSAFELOOPTIMEOUT_TOAST="Seems like you've hit transaction timeout.",
-	NCSAFELOOPSAFEOVERLIMIT_TOAST="Uh oh, it seems like the safe went over the limit. Use 'Reset Safe Value' then try again",
-	--! References [NCRESETSAFEVALUE]
-	NCSAFELOOPSOMETHINGWENTWRONG_TOAST="Something didn't go as it should... if you can reproduce this issue, please report it.",
+    NCSAFELOOPMAXIMUMVALUEREACHED_TOAST="Maximum value has been reached!",
+    NCSAFELOOPNOTINNIGHTCLUB_TOAST="You don't appear to be in your Nightclub. Make sure you are in your Nightclub with the safe open before using this feature!",
+    NCSAFELOOPTIMEOUT_TOAST="Seems like you've hit transaction timeout.",
+    NCSAFELOOPSAFEOVERLIMIT_TOAST="Uh oh, it seems like the safe went over the limit. Use 'Reset Safe Value' then try again",
+    --! References [NCRESETSAFEVALUE]
+    NCSAFELOOPSOMETHINGWENTWRONG_TOAST="Something didn't go as it should... if you can reproduce this issue, please report it.",
 
-	MCLIST_DESC="Note that sell values cap out at $2.5m.",
+    MCLIST_DESC="Note that sell values cap out at $2.5m.",
 
-	BUNKERLIST_DESC="Note that sell values cap out at $2.7m.",
+    BUNKERLIST_DESC="Note that sell values cap out at $2.7m.",
 
-	TELEPORTTO="Teleport to {1}",
-	TELEPORTTO_DESC="Teleports you to your {1}",
-	--! {1} may be one of the following: [PROPERTY], [WAREHOUSE], [NIGHTCLUB], or [NIGHTCLUBSAFE]
+    TELEPORTTO="Teleport to {1}",
+    TELEPORTTO_DESC="Teleports you to your {1}",
+    --! {1} may be one of the following: [PROPERTY], [WAREHOUSE], [NIGHTCLUB], or [NIGHTCLUBSAFE]
 
-	NOTINNIGHTCLUB_TOAST="You are not in your Nightclub!",
+    NOTINNIGHTCLUB_TOAST="You are not in your Nightclub!",
 
-	JOINDISCORD="Join the Discord",
-	SHOWMOTDBLANK_TOAST="The MOTD is blank.",
-	WARNINGRISKY_TOAST="WARNING: All features in this script are considered risky! There is a chance you will get banned within an unknown number of days (bans are delayed randomly). You have been warned.",
+    JOINDISCORD="Join the Discord",
+    SHOWMOTDBLANK_TOAST="The MOTD is blank.",
+    WARNINGRISKY_TOAST="WARNING: All features in this script are considered risky! There is a chance you will get banned within an unknown number of days (bans are delayed randomly). You have been warned.",
 
     --! Nightclub
     ALREADYINPROPERTY="You are already in your {1}!",
