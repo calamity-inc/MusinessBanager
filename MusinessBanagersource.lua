@@ -806,7 +806,7 @@ local function TranslateLabels(path)
             lvalue, rvalue = GetKeyValueFromLine(line, 1)
             if lvalue then
                 if MenuLabels[lvalue] ~= nil then
-                    MenuLabels[lvalue] = rvalue:gsub("\\n", "\n") or "ERROR"
+                    lang.translate(MenuLabels[lvalue], rvalue:gsub("\\n", "\n") or "ERROR")
                 else
                     util.toast("Error occurred while reading Translation file. Translation file may be corrupt or out of date.")
                     --util.log("Translation file attempted to assign a non-existant MenuLabel a value. $"..lvalue)
