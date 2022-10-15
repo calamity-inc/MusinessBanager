@@ -227,7 +227,6 @@ local MenuLabels = {
 
     NOTINNIGHTCLUB_TOAST="You are not in your Nightclub!",
 
-    JOINDISCORD="Join the Discord",
     SHOWMOTDBLANK_TOAST="The MOTD is blank.",
     WARNINGRISKY_TOAST="WARNING: All features in this script are considered risky! There is a chance you will get banned within an unknown number of days (bans are delayed randomly). You have been warned.",
 
@@ -2558,5 +2557,3 @@ util.create_tick_handler(function()
     end
     return true
 end)
-
-menu.hyperlink(menu.my_root(), MenuLabels.JOINDISCORD, "https://discord.gg/mmxWwc5FCC")
