@@ -1251,7 +1251,7 @@ end
 
 local function AddToTotalEarned(amount, type)
     type.amount = type.amount + amount
-    local str = type and GetLabelText(type.prefix, GetLabelText(MenuLabels.PREFIX_TOTALEARNED, type.amount)) or GetLabelText(MenuLabels.PREFIX_TOTALEARNED, type.amount)
+    local str = type and GetLabelTextLiteral(type.prefix, GetLabelTextLiteral(MenuLabels.PREFIX_TOTALEARNED, type.amount)) or GetLabelTextLiteral(MenuLabels.PREFIX_TOTALEARNED, type.amount)
     util.toast(str, TOAST_ABOVE_MAP | TOAST_LOGGER)
 end
 --#endregion Basic Functions
