@@ -188,8 +188,6 @@ local MenuLabels = {
     NCMAXPOPULARITY_DESC="Sets your Nightclub popularity to 100%",
     NCMAXPOPULARITY_TOAST="Maxed Nightclub popularity.",
 
-    NCSAFELIST_DESC="",
-
     NCSAFELOOP="AFK Money Loop",
     NCSAFELOOP_DESC="Open your Nightclub safe before enabling this feature!\nWill allow you to passively gain $300k every ~4-5 seconds",
 
@@ -2047,7 +2045,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
     -- Nightclub Safes
     ----------------------------------
 
-    local NCSafe = menu.list(NCMan, MenuLabels.NIGHTCLUBSAFE, {}, MenuLabels.NCSAFELIST_DESC)
+    local NCSafe = menu.list(NCMan, MenuLabels.NIGHTCLUBSAFE)
         menu.toggle_loop(NCSafe, MenuLabels.MONITOR, {"monitorncsafe"}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.MONEY, MenuLabels.NIGHTCLUBSAFE, MenuLabels.INFOOVERLAY), function()
             if IsInSession() then
                 local safeval = GetSafeCashValueFromStat()
