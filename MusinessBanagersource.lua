@@ -1221,6 +1221,12 @@ local function SetEntityCoords(entity, coords)
     ENTITY_SET_ENTITY_COORDS_NO_OFFSET(entity, coords.x, coords.y, coords.z, false, false, false)
 end
 
+local function TeleportTo(coords)
+    local ent = entities.get_user_vehicle_as_handle()
+    if ent == 0 then ent = players.user_ped() end
+    SetEntityCoords(ent, coords)
+end
+
 local function LoadArea(coords)
     local has_ground, ground_z = util.get_ground_z(coords.x, coords.y, coords.z)
     if not has_ground then
@@ -1540,7 +1546,7 @@ local function FixNCSafe()
     end
     while IsInSession() and (GetSafeValue() > 300000 or GetSafeValue() < 0) do
         if IsPlayerInNightclub() then
-            SetEntityCoords(PLAYER_PLAYER_PED_ID(), {x = -1620.5, y = -3014.9, z = -75.2})
+            TeleportTo({x = -1620.5, y = -3014.9, z = -75.2})
         end
         local before = GetSafeValue()
         TriggerNCSafeAddMoneyTransaction(300000, false)
@@ -1573,7 +1579,7 @@ local function TeleportToMCProperty(property_id)
     if property_id ~= 0 and IsInSession() then
         local coords = MCBusinessPropertyInfo[property_id].coords
         if LoadArea(coords) then
-            SetEntityCoords(PLAYER_PLAYER_PED_ID(), coords)
+            TeleportTo(coords)
         end
     end
 end
@@ -1596,7 +1602,7 @@ menu.action(SCMan, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.WAREHOUSE), {"
     local tbl = WarehousePropertyInfo[GetWarehousePropertyFromSlot(Selected_Warehouse)]
     if tbl ~= nil then
         local pos = tbl.coords
-        SetEntityCoords(PLAYER_PLAYER_PED_ID(), pos)
+        TeleportTo(pos)
     end
 end)
 
@@ -1958,7 +1964,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
             if property ~= 0 and IsInSession() then
                 local coords = NightclubPropertyInfo[property].coords
                 if LoadArea(coords) then
-                    SetEntityCoords(PLAYER_PLAYER_PED_ID(), coords)
+                    TeleportTo(coords)
                 end
             end
         end
@@ -2056,7 +2062,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         menu.action(NCSafe, GetLabelText(MenuLabels.TELEPORTTO, MenuLabels.NIGHTCLUBSAFE), {"tpncsafe"}, GetLabelText(MenuLabels.TELEPORTTO_DESC, MenuLabels.NIGHTCLUBSAFE), function()
             if IsInSession() then
                 if IsPlayerInNightclub() then
-                    SetEntityCoords(PLAYER_PLAYER_PED_ID(), NCSafePos)
+                    TeleportTo(NCSafePos)
                 else
                     util.toast(MenuLabels.NOTINNIGHTCLUB_TOAST)
                     menu.trigger_commands("tpnightclub")
@@ -2201,7 +2207,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
             if remote.killswitches.safeloop then
                 return
             end
-            SetEntityCoords(PLAYER_PLAYER_PED_ID(), {x = -1615.86, y = -3015.5, z = -75.2})
+            TeleportTo({x = -1615.86, y = -3015.5, z = -75.2})
         end)
 
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPDELAY, {"ncafkloopdelay"}, MenuLabels.NCSAFELOOPDELAY_DESC, 0, 100000, NCSafeLoopDelay, 100, function(peepeepoopoo)
@@ -2482,7 +2488,7 @@ if not IS_RELEASE_VERSION then
             local coords = MCBusinessPropertyInfo[MyBusinesses[type].property].coords
             if coords then
                 if LoadArea(coords) then
-                    SetEntityCoords(PLAYER_PLAYER_PED_ID(), coords)
+                    TeleportTo(coords)
                 end
             else
                 util.toast("You do not have a "..type)
