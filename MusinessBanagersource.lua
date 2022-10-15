@@ -684,7 +684,7 @@ local I32_MAX = 2147483647
 local function ReplacePlaceholder(str, rep, num)
     local b, e = str:find("{"..num.."}")
     if b and e then
-        return (str:sub(0, b-1) .. lang.get_string(rep) .. str:sub(e+1, -1))
+        return (str:sub(0, b-1) .. rep .. str:sub(e+1, -1))
     else
         util.log(string.format("Expected {%i} Placeholder in: %s", num, str))
         return str
@@ -700,6 +700,14 @@ local function GetLabelText(label, ...)
     -- Usage: GetLabelText("Press {2} to open {1}.", "in fullscreen", "F")  -- Returns "Press F to open in fullscreen."
     -- Note: NUMBER OF ARGS GIVEN TO FUNCTION AND ARGS IN LABEL MUST MATCH!
     -- Note: EMPTY ARGS OR DUPLICATE ARGS IN LABEL IS UNDEFINED BEHAVIOUR!
+    local args = {...}
+    local str = lang.get_string(label)
+    for i = 1, #args do
+        str = ReplacePlaceholder(str, lang.get_string(args[i]), i)
+    end
+    return str
+end
+local function GetLabelTextLiteral(label, ...)
     local args = {...}
     local str = lang.get_string(label)
     for i = 1, #args do
@@ -1599,7 +1607,7 @@ menu.toggle_loop(SCMan, MenuLabels.MONITOR, {"monitorcargo"}, GetLabelText(MenuL
         local crate_amount = GetSpecialCargoCrateAmountFromStat(Selected_Warehouse)
         local warehouse_property_info = WarehousePropertyInfo[GetWarehousePropertyFromSlot(Selected_Warehouse)]
         local capacity = warehouse_property_info and warehouse_property_info.capacity or "unk"
-        util.draw_debug_text(GetLabelText(MenuLabels.INFO_SCWAREHOUSE, Selected_Warehouse+1, crate_amount, capacity))
+        util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_SCWAREHOUSE, Selected_Warehouse+1, crate_amount, capacity))
     end
 end)
 
@@ -1980,7 +1988,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         menu.toggle_loop(list, MenuLabels.MONITOR, {"monitorhub"..name}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.STOCK, MenuLabels.NIGHTCLUB, MenuLabels.INFOOVERLAY), function()
             if IsInSession() then
                 local value = GetGlobalInt(globals.Hub[name].Cap)
-                util.draw_debug_text(GetLabelText(MenuLabels.INFO_HUBBUSINESS, label, MyBusinesses.Hub[name], value))
+                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_HUBBUSINESS, label, MyBusinesses.Hub[name], value))
             end
         end)
 
@@ -2043,7 +2051,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         menu.toggle_loop(NCSafe, MenuLabels.MONITOR, {"monitorncsafe"}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.MONEY, MenuLabels.NIGHTCLUBSAFE, MenuLabels.INFOOVERLAY), function()
             if IsInSession() then
                 local safeval = GetSafeCashValueFromStat()
-                util.draw_debug_text(GetLabelText(MenuLabels.INFO_NCSAFE, safeval))
+                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_NCSAFE, safeval))
             end
         end)
 
@@ -2266,7 +2274,7 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
         menu.toggle_loop(list, MenuLabels.MONITOR, {"monitor"..name}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.PRODUCT, MenuLabels.BUSINESS, MenuLabels.INFOOVERLAY), function()
             if IsInSession() then
                 local capacity = GetGlobalInt(globals.MC[name].Cap)
-                util.draw_debug_text(GetLabelText(MenuLabels.INFO_MCBUSINESS, label, MyBusinesses[name].supplies, MyBusinesses[name].product, capacity))
+                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_MCBUSINESS, label, MyBusinesses[name].supplies, MyBusinesses[name].product, capacity))
             end
         end)
 
@@ -2349,7 +2357,7 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
     menu.toggle_loop(BunkMan, MenuLabels.MONITOR, {"monitorbunker"}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.PRODUCT, MenuLabels.BUNKER, MenuLabels.INFOOVERLAY), function()
         if IsInSession() then
             local capacity = GetGlobalInt(globals.MC.Bunker.Cap)
-            util.draw_debug_text(GetLabelText(MenuLabels.INFO_BUNKER, MyBusinesses.Bunker.supplies, MyBusinesses.Bunker.product, capacity))
+            util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_BUNKER, MyBusinesses.Bunker.supplies, MyBusinesses.Bunker.product, capacity))
         end
     end)
 
