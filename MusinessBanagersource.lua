@@ -260,6 +260,11 @@ local MenuLabels = {
     SPECIALCARGOSETDELIVERTIME_DESC="Sets the amount of time to pass before you staff will deliver, to zero",
 }
 
+-- Register English labels now
+for k, v in MenuLabels do
+    MenuLabels[k] = lang.register(v)
+end
+
 local MCBusinessPropertyInfo = {
     [1]  = {name = "Paleto Bay Meth Lab",                      coords = {x = 52.903,     y =  6338.585,  z = 31.35  }, type = 3},  -- "MP_BWH_METH_1",
     [2]  = {name = "Mount Chiliad Weed Farm",                  coords = {x = 416.7524,   y =  6520.753,  z = 27.7121}, type = 1},  -- "MP_BWH_WEED_1",
@@ -822,10 +827,6 @@ local function TranslateLabels(path)
             end
         end
     end
-end
-
-for k, v in MenuLabels do
-    MenuLabels[k] = lang.register(v)
 end
 
 do
