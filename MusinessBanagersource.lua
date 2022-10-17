@@ -701,15 +701,15 @@ local function GetLabelText(label, ...)
     -- Note: NUMBER OF ARGS GIVEN TO FUNCTION AND ARGS IN LABEL MUST MATCH!
     -- Note: EMPTY ARGS OR DUPLICATE ARGS IN LABEL IS UNDEFINED BEHAVIOUR!
     local args = {...}
-    local str = lang.get_string(label)
+    local str = lang.get_string(label, lang.get_current())
     for i = 1, #args do
-        str = ReplacePlaceholder(str, lang.get_string(args[i]), i)
+        str = ReplacePlaceholder(str, lang.get_string(args[i], lang.get_current()), i)
     end
     return str
 end
 local function GetLabelTextLiteral(label, ...)
     local args = {...}
-    local str = lang.get_string(label)
+    local str = lang.get_string(label, lang.get_current())
     for i = 1, #args do
         str = ReplacePlaceholder(str, args[i], i)
     end
@@ -840,7 +840,7 @@ end
 
 local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
 if not SCRIPT_SILENT_START then
-    util.toast(lang.get_string(MenuLabels.WARNINGRISKY_TOAST))
+    util.toast(lang.get_string(MenuLabels.WARNINGRISKY_TOAST, lang.get_current()))
 end
 
 -----------------------------------
