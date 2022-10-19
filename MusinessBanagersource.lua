@@ -19,7 +19,7 @@ local og_log = util.log
 local nullsub = function() --[[util.toast("nullsub")]] end
 util.toast = function(str, flag) assert(str != nil, "No string given") if flag ~= nil then og_toast(MBPrefix .. tostring(str), flag) else og_toast(MBPrefix .. tostring(str)) end end
 util.log = function(str) assert(str != nil, "No string given") og_log(MBPrefix .. tostring(str)) end
-util.yield_x = function(int) for i = 1, int do util.internal_yield() end end -- yields x amount of ticks
+util.yield_x = function(int) for i = 1, int do util.yield_once() end end -- yields x amount of ticks
 local menu, players, entities, directx, util, v3, lang, filesystem, async_http, memory = menu, players, entities, directx, util, v3, lang, filesystem, async_http, memory
 
 --#region natives
