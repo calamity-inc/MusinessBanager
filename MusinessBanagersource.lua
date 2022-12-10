@@ -447,127 +447,76 @@ local globals = {
         MaxSellPrice = 2000000,
 
         Forgery = {
-            Sell1               = tunables_global+17471, -- was 17223
             Sell1DefaultValue   = 1350,
-            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17449, -- was 17201
             ProSpd1DefaultValue = 300000,
             ProSpd2DefaultValue = 300000,
-            Ratio1              = tunables_global+17461, -- was 17213
             Ratio1DefaultValue  = 4,
-            Ratio2              = tunables_global+17466, -- was 17218
             Ratio2DefaultValue  = 2,
-            Cap                 = tunables_global+18980, -- was 18730
             CapDefaultValue     = 60,
         },
 
         Cash = {
-            Sell1               = tunables_global+17472, -- was 17224
             Sell1DefaultValue   = 4725,
-            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17450, -- was 17202
             ProSpd1DefaultValue = 720000,
             ProSpd2DefaultValue = 720000,
-            Ratio1              = tunables_global+17462, -- was 17214
             Ratio1DefaultValue  = 10,
-            Ratio2              = tunables_global+17467, -- was 17219
             Ratio2DefaultValue  = 5,
-            Cap                 = tunables_global+18988, -- was 18738
             CapDefaultValue     = 40,
         },
 
         Cocaine = {
-            Sell1               = tunables_global+17473, -- was 17225
             Sell1DefaultValue   = 27000,
-            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17448, -- was 17200
             ProSpd1DefaultValue = 3000000,
             ProSpd2DefaultValue = 3000000,
-            Ratio1              = tunables_global+17463, -- was 17215
             Ratio1DefaultValue  = 50,
-            Ratio2              = tunables_global+17468, -- was 17220
             Ratio2DefaultValue  = 25,
-            Cap                 = tunables_global+18972, -- was 18722
             CapDefaultValue     = 10,
         },
 
         Meth = {
-            Sell1               = tunables_global+17474, -- was 17226
             Sell1DefaultValue   = 11475,
-            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17447, -- was 17199
             ProSpd1DefaultValue = 1800000,
             ProSpd2DefaultValue = 1800000,
-            Ratio1              = tunables_global+17464, -- was 17216
             Ratio1DefaultValue  = 24,
-            Ratio2              = tunables_global+17469, -- was 17221
             Ratio2DefaultValue  = 12,
-            Cap                 = tunables_global+18964, -- was 18714
             CapDefaultValue     = 20,
         },
 
         Weed = {
-            Sell1               = tunables_global+17475, -- was 17227
             Sell1DefaultValue   = 2025,
-            Sell2               = tunables_global+19112, -- was 18862
             Sell2DefaultValue   = 1.5,
-            ProSpd1             = tunables_global+17446, -- was 17198
             ProSpd1DefaultValue = 360000,
             ProSpd2DefaultValue = 360000,
-            Ratio1              = tunables_global+17465, -- was 17217
             Ratio1DefaultValue  = 4,
-            Ratio2              = tunables_global+17470, -- was 17222
             Ratio2DefaultValue  = 2,
-            Cap                 = tunables_global+18956, -- was 18706
             CapDefaultValue     = 80,
         },
 
         Bunker = {
-            Sell1 = tunables_global+21581, -- was 21329
             Sell1DefaultValue = 5000,
-            Sell2 = tunables_global+21554, -- was 21304
             Sell2DefaultValue = 1.5,
-            ProSpd1 = tunables_global+21576, -- was 21324 -- base
             ProSpd1DefaultValue = 600000,
-            ProSpd2 = tunables_global+21577, -- was 21325 -- equipment
             ProSpd2DefaultValue = 90000,
-            ProSpd3 = tunables_global+21578, -- was 21326 -- staff upg
             ProSpd3DefaultValue = 90000,
-            Ratio1 = tunables_global+21327, -- was 21327 -- no upgrade
             Ratio1DefaultValue = 10,
-            Ratio2 = tunables_global+21328, -- was 21328 -- with upgrade
             Ratio2DefaultValue = 5,
-            Cap = tunables_global+21575, -- was 21323
             CapDefaultValue = 100,
         },
     },
 
-    SafeCap           = tunables_global+24073, -- was 23814 -- 250000, which is interesting because its actually set to 210k :thonk: 
-    SafeRevenue       = tunables_global+24049, -- was 23790 keep in mind theres 20 different ones, this is just the first
     SafeLimit         = 300000,
     SafeStatus1       = 1640759, -- was 1637063
     SafeStatus2       = 2787714, -- was 2783521
 
-    MCSupplyDelay   = tunables_global+18999, -- 600 -- was 18749
     MCSupplyTime    = 1640642+1, -- not a tunable, found in freemode.c func_16618. Now found in func_16968. was 1636946+1
-    BunkSupplyDelay = tunables_global+21349, -- 600
 
     SpecialCargoMaxSellPriceValue   = 10000000,
-    SpecialCargoBypassBuyCooldown   = tunables_global+15608, -- 300000  -- was 15361
-    SpecialCargoBypassSellCooldown  = tunables_global+15609, -- 1800000 -- was 15362
-    SpecialCargoCrateMaxThreshold   = tunables_global+15842, -- 111     -- was 15595
-    SpecialCargoRewardPerCrate      = tunables_global+15863, -- 20000   -- was 15616
-    SpecialCargoCrateMultiplier3    = tunables_global+16708, -- 100     -- was 16460
-    SpecialCargoCrateMultiplier2    = tunables_global+16709, -- 50      -- was 16461
-    SpecialCargoCrateMultiplier1    = tunables_global+16710, -- 20      -- was 16462
-    SpecialCargoBonus               = tunables_global+15635, -- 9000    -- was 15388
 
     SpecialCargoSellFuncSomething   = 1946098, -- was 1946785
-    SpecialCargoDeliveryTime        = tunables_global+32537,
     SpecialCargoDeliveryCrates      = 1888846+12,
 
     IsUsingComputerScreen = 75485, -- was 75027
@@ -595,6 +544,57 @@ globals.Hub.Forgery.Cap = tunables_global+24420
 globals.Hub.Cash.Sell = tunables_global+24414
 globals.Hub.Cash.ProSpd = tunables_global+24399
 globals.Hub.Cash.Cap = tunables_global+24421
+globals.MC.Forgery.Sell1 = tunables_global+17471
+globals.MC.Forgery.Sell2 = tunables_global+19112
+globals.MC.Forgery.ProSpd1 = tunables_global+17449
+globals.MC.Forgery.Ratio1 = tunables_global+17461
+globals.MC.Forgery.Ratio2 = tunables_global+17466
+globals.MC.Forgery.Cap = tunables_global+18980
+globals.MC.Cash.Sell1 = tunables_global+17472
+globals.MC.Cash.Sell2 = tunables_global+19112
+globals.MC.Cash.ProSpd1 = tunables_global+17450
+globals.MC.Cash.Ratio1 = tunables_global+17462
+globals.MC.Cash.Ratio2 = tunables_global+17467
+globals.MC.Cash.Cap = tunables_global+18988
+globals.MC.Cocaine.Sell1 = tunables_global+17473
+globals.MC.Cocaine.Sell2 = tunables_global+19112
+globals.MC.Cocaine.ProSpd1 = tunables_global+17448
+globals.MC.Cocaine.Ratio1 = tunables_global+17463
+globals.MC.Cocaine.Ratio2 = tunables_global+17468
+globals.MC.Cocaine.Cap = tunables_global+18972
+globals.MC.Meth.Sell1 = tunables_global+17474
+globals.MC.Meth.Sell2 = tunables_global+19112
+globals.MC.Meth.ProSpd1 = tunables_global+17447
+globals.MC.Meth.Ratio1 = tunables_global+17464
+globals.MC.Meth.Ratio2 = tunables_global+17469
+globals.MC.Meth.Cap = tunables_global+18964
+globals.MC.Weed.Sell1 = tunables_global+17475
+globals.MC.Weed.Sell2 = tunables_global+19112
+globals.MC.Weed.ProSpd1 = tunables_global+17446
+globals.MC.Weed.Ratio1 = tunables_global+17465
+globals.MC.Weed.Ratio2 = tunables_global+17470
+globals.MC.Weed.Cap = tunables_global+18956
+globals.MC.Bunker.Sell1 = tunables_global+21581
+globals.MC.Bunker.Sell2 = tunables_global+21554
+globals.MC.Bunker.ProSpd1 = tunables_global+21576
+globals.MC.Bunker.ProSpd2 = tunables_global+21577
+globals.MC.Bunker.ProSpd3 = tunables_global+21578
+globals.MC.Bunker.Ratio1 = tunables_global+21327
+globals.MC.Bunker.Ratio2 = tunables_global+21328
+globals.MC.Bunker.Cap = tunables_global+21575
+globals.SafeCap = tunables_global+24073
+globals.SafeRevenue = tunables_global+24049
+globals.MCSupplyDelay = tunables_global+18999
+globals.BunkSupplyDelay = tunables_global+21349
+globals.SpecialCargoBypassBuyCooldown = tunables_global+15608
+globals.SpecialCargoBypassSellCooldown = tunables_global+15609
+globals.SpecialCargoCrateMaxThreshold = tunables_global+15842
+globals.SpecialCargoRewardPerCrate = tunables_global+15863
+globals.SpecialCargoCrateMultiplier3 = tunables_global+16708
+globals.SpecialCargoCrateMultiplier2 = tunables_global+16709
+globals.SpecialCargoCrateMultiplier1 = tunables_global+16710
+globals.SpecialCargoBonus = tunables_global+15635
+globals.SpecialCargoDeliveryTime = tunables_global+32537
 --#endregion Generated by internal tooling
 
 local locals = {
