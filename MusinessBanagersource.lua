@@ -1248,8 +1248,9 @@ end
 -----------------------------------
 --#region Global Functions
 
+-- [[update]]
 local function GetOrgOffset()
-    return (1892703 + 1 + (players.user() * 599) + 10)
+    return (1894573 + 1 + (players.user() * 608) + 10)
 end
 
 local function IsInOrg()
@@ -1404,8 +1405,9 @@ local function CheckIfAlone()
     return true
 end
 
+-- [[update]]
 local function GetPlayerPropertyOffset()
-    return (2689235 + 1 + (players.user() * 453) + 318 + 6)
+    return (2657589 + 1 + (players.user() * 466) + 321 + 7)
 end
 
 local function GetPlayerPropertyID()
