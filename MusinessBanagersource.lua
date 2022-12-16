@@ -514,7 +514,7 @@ local globals = {
 
     MCSupplyTime    = 1648637+1, -- above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), unsure why +1
 
-    SpecialCargoMaxSellPriceValue   = 10000000,
+    SpecialCargoMaxSellPriceValue   = 6000000,
 
     SpecialCargoSellFuncSomething   = 1949955,
     SpecialCargoDeliveryCrates      = 1890428+12, -- unsure why +12
