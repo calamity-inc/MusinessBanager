@@ -1210,7 +1210,7 @@ end
 
 local function TeleportTo(coords)
     local ent = entities.get_user_vehicle_as_handle()
-    if ent == 0 then ent = players.user_ped() end
+    if ent == -1 then ent = players.user_ped() end
     SetEntityCoords(ent, coords)
 end
 
