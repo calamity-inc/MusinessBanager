@@ -1209,7 +1209,7 @@ local function SetEntityCoords(entity, coords)
 end
 
 local function TeleportTo(coords)
-    local ent = entities.get_user_vehicle_as_handle()
+    local ent = entities.get_user_vehicle_as_handle(false)
     if ent == -1 then ent = players.user_ped() end
     SetEntityCoords(ent, coords)
 end
