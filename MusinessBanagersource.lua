@@ -922,7 +922,7 @@ local function HandleHTTPResponse(response)
     HTTP.FAILSAFE = false -- reset failsafe if it triggered before
 
     if not IGNORE_VERSION_DIFFERENCE and IS_RELEASE_VERSION and not VersionCheck(THIS_RELEASE_VERSION, remote.version) then
-        util.toast(MenuLabels.SCRIPTOUTOFDATE, TOAST_ALL)
+        util.toast(lang.get_localised(MenuLabels.SCRIPTOUTOFDATE), TOAST_ALL)
     end
 end
 
@@ -1397,7 +1397,7 @@ end
 -- returns true if already alone, false if it it had to bealone
 local function CheckIfAlone()
     if #players.list() > 1 then
-        util.toast(MenuLabels.BEALONE_TOAST)
+        util.toast(lang.get_localised(MenuLabels.BEALONE_TOAST))
         menu.trigger_commands("bealone")
         util.yield(1000)
         return false
@@ -1452,7 +1452,7 @@ local function SetSpecialCargoValues(state)
             local warehouse = GetLocalInt(locals.SpecialCargoSecuroString, locals.SpecialCargoCurrentProperty)
             if warehouse ~= nil then
                 if warehouse ~= 0 and warehouse ~= GetWarehousePropertyFromSlot(Selected_Warehouse) then
-                    util.toast(MenuLabels.NOTINSELECTEDWAREHOUSE_TOAST)
+                    util.toast(lang.get_localised(MenuLabels.NOTINSELECTEDWAREHOUSE_TOAST))
                 end
             end
         end)
@@ -1530,7 +1530,7 @@ end
 local function FixNCSafe()
     local GetSafeValue = GetSafeCashValueFromStat
     if not (IsInSession() and (GetSafeValue() > 300000 or GetSafeValue() < 0)) then
-        util.toast(MenuLabels.NCRESETSAFEVALUESKIP_TOAST)
+        util.toast(lang.get_localised(MenuLabels.NCRESETSAFEVALUESKIP_TOAST))
         return
     end
     while IsInSession() and (GetSafeValue() > 300000 or GetSafeValue() < 0) do
@@ -1541,10 +1541,10 @@ local function FixNCSafe()
         TriggerNCSafeAddMoneyTransaction(300000, false)
         local after = GetSafeValue()
         if before == after then
-            util.toast(MenuLabels.TRANSACTIONSSTUCK_TOAST)
+            util.toast(lang.get_localised(MenuLabels.TRANSACTIONSSTUCK_TOAST))
             return
         elseif (after <= 300000 and after >= 0) then
-            util.toast(MenuLabels.NCRESETSAFEVALUESUCCESS_TOAST)
+            util.toast(lang.get_localised(MenuLabels.NCRESETSAFEVALUESUCCESS_TOAST))
             return
         end
         util.yield()
@@ -1624,7 +1624,7 @@ end)
 
 SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.BYPASSCOOLDOWN, MenuLabels.BUYMISSION), {"nobuycdcargo"}, GetLabelText(MenuLabels.BYPASSCOOLDOWN_DESC, MenuLabels.START, MenuLabels.BUYMISSION), function()
     if remote.killswitches.specialcargo then
-        util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+        util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
         SetGlobalInt(globals.SpecialCargoBypassBuyCooldown, 300000)
         util.stop_thread()
         return
@@ -1637,7 +1637,7 @@ end)
 
 SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.BYPASSCOOLDOWN, MenuLabels.SELLMISSION), {"nosellcdcargo"}, GetLabelText(MenuLabels.BYPASSCOOLDOWN_DESC, MenuLabels.START, MenuLabels.SELLMISSION), function()
     if remote.killswitches.specialcargo then
-        util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+        util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
         SetGlobalInt(globals.SpecialCargoBypassSellCooldown, 1800000)
         util.stop_thread()
         return
@@ -1754,7 +1754,7 @@ do
 
     SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, GetLabelText(MenuLabels.AUTOCOMPLETE, MenuLabels.SELLMISSION), {"autocompletespecialsell"}, GetLabelText(MenuLabels.AUTOCOMPLETE_DESC, MenuLabels.SELLMISSION), function()
         if remote.killswitches.specialcargo then
-            util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+            util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             util.stop_thread()
             return
         end
@@ -1770,7 +1770,7 @@ do
 
     menu.action(SCMan, GetLabelText(MenuLabels.OPENSCREEN, MenuLabels.TERRORBYTE), {"openterrorbyte"}, GetLabelText(MenuLabels.OPENSCREEN_DESC, MenuLabels.TERRORBYTE), function()
         if remote.killswitches.specialcargo then
-            util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+            util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             return
         end
 
@@ -1784,7 +1784,7 @@ do
 
     menu.action(SCMan, GetLabelText(MenuLabels.OPENSCREEN, MenuLabels.WAREHOUSE), {"openwarehouse"}, GetLabelText(MenuLabels.OPENSCREEN_DESC, MenuLabels.WAREHOUSE), function()
         if remote.killswitches.specialcargo then
-            util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+            util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             return
         end
 
@@ -1807,7 +1807,7 @@ do
 
     menu.action(SCMan, MenuLabels.SELLACRATE, {"sellacrate"}, MenuLabels.SELLACRATE_DESC, function()
         if remote.killswitches.specialcargo then
-            util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+            util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             return
         end
 
@@ -1829,7 +1829,7 @@ do
                     StartSellMission()
                     SetPlayerPropertyID(-1)
                 else
-                    util.toast(MenuLabels.SPECIALCARGONOMORECRATES)
+                    util.toast(lang.get_localised(MenuLabels.SPECIALCARGONOMORECRATES))
                 end
             end
         end
@@ -1844,7 +1844,7 @@ do
 
     menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
         if remote.killswitches.specialcargo then
-            util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+            util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             return
         end
 
@@ -1858,7 +1858,7 @@ do
             RegisterAsCEO()
             util.yield()
         elseif GetOrgType() == 1 then
-            util.toast(MenuLabels.SPECIALCARGONEEDCEO)
+            util.toast(lang.get_localised(MenuLabels.SPECIALCARGONEEDCEO))
             util.yield(200)
             return
         end
@@ -1912,7 +1912,7 @@ end
 
 SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOMAXCRATESOURCE, {}, MenuLabels.SPECIALCARGOMAXCRATESOURCE_DESC, function()
     if remote.killswitches.specialcargo then
-        util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+        util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
         util.stop_thread()
         return
     end
@@ -1929,7 +1929,7 @@ end)
 
 SCRefs[#SCRefs+1] = menu.toggle_loop(SCMan, MenuLabels.SPECIALCARGOSETDELIVERTIME, {}, MenuLabels.SPECIALCARGOSETDELIVERTIME_DESC, function()
     if remote.killswitches.specialcargo then
-        util.toast(MenuLabels.KILLSWITCH_SPECIALCARGO)
+        util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
         SetGlobalInt(globals.SpecialCargoDeliveryTime, 48)
         util.stop_thread()
         return
@@ -1987,7 +1987,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
 
         menu.toggle_loop(list, MenuLabels.MAXSELLPRICE, {"maxsellhub"..name}, GetLabelText(MenuLabels.MAXSELLPRICE_DESC, MenuLabels.STOCK, MenuLabels.STOCK), function()
             if remote.killswitches.maxsellprice then
-                util.toast(MenuLabels.KILLSWITCH_MAXSELLPRICE)
+                util.toast(lang.get_localised(MenuLabels.KILLSWITCH_MAXSELLPRICE))
                 SetGlobalInt(globals.Hub[name].Sell, globals.Hub[name].SellDefaultValue)
                 util.stop_thread()
                 return
@@ -2008,7 +2008,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
             toggle_active = toggle
             if toggle then
                 --! Missing Global Here (one that goes into effect immediately)
-                util.toast(MenuLabels.MAXPRODUCTIONSPEEDSLOW_TOAST)
+                util.toast(lang.get_localised(MenuLabels.MAXPRODUCTIONSPEEDSLOW_TOAST))
             end
             while toggle_active do
                 if IsInSession() then
@@ -2021,7 +2021,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         menu.click_slider(list, MenuLabels.MAXIMUMCAPACITY, {"setcaphub"..name}, MenuLabels.MAXIMUMCAPACITY_DESC, 1, 999, GetGlobalInt(globals.Hub[name].Cap), 5, function(value)
             if IsInSession() then
                 SetGlobalInt(globals.Hub[name].Cap, value)
-                util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
+                util.toast(lang.get_localised(MenuLabels.MAXIMUMCAPACITY_TOAST))
             end
         end)
 
@@ -2030,7 +2030,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         --     menu.click_slider(list, "[DEBUG] " .. MenuLabels.SETPRODUCT, {"setproducthub"..name}, MenuLabels.SETPRODUCT_DESC, 0, GetGlobalInt(globals.Hub[name].Cap), GetGlobalInt(globals.Hub[name].Cap), 1, function(value) --! implement default values for set product limits
         --         if IsInSession() then
         --             SetHubValueFromSlot(index, value)
-        --             util.toast(MenuLabels.SETPRODUCT_TOAST)
+        --             util.toast(lang.get_localised(MenuLabels.SETPRODUCT_TOAST))
         --         end
         --     end)
         -- end
@@ -2053,7 +2053,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                 if IsPlayerInNightclub() then
                     TeleportTo(NCSafePos)
                 else
-                    util.toast(MenuLabels.NOTINNIGHTCLUB_TOAST)
+                    util.toast(lang.get_localised(MenuLabels.NOTINNIGHTCLUB_TOAST))
                     menu.trigger_commands("tpnightclub")
                 end
             end
@@ -2062,14 +2062,14 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         menu.action(NCSafe, MenuLabels.NCMAXPOPULARITY, {"resupplyncsafe"}, MenuLabels.NCMAXPOPULARITY_DESC, function()
             if IsInSession() then
                 menu.trigger_commands("clubpopularity 100")
-                util.toast(MenuLabels.NCMAXPOPULARITY_TOAST)
+                util.toast(lang.get_localised(MenuLabels.NCMAXPOPULARITY_TOAST))
             end
         end)
 
         menu.action(NCSafe, MenuLabels.TRIGGERPRODUCTION, {"triggerncsafe"}, MenuLabels.TRIGGERPRODUCTION_DESC, function()
             if IsInSession() then
                 if SetNightclubPayTimeLeft(-1) then
-                    util.toast(MenuLabels.TRIGGERPRODUCTION_TOAST)
+                    util.toast(lang.get_localised(MenuLabels.TRIGGERPRODUCTION_TOAST))
                 end
             end
         end)
@@ -2078,7 +2078,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
             if IsInSession() then
                 local address = memory.script_global(globals.SafeCap)
                 memory.write_int(address, value)
-                util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
+                util.toast(lang.get_localised(MenuLabels.MAXIMUMCAPACITY_TOAST))
             end
         end)
 
@@ -2096,7 +2096,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
 
         menu.toggle_loop(NCSafe, MenuLabels.NCSAFELOOP, {"ncafkloop"}, MenuLabels.NCSAFELOOP_DESC, function(toggle)
             if remote.killswitches.safeloop then
-                util.toast(MenuLabels.KILLSWITCH_SAFELOOP, TOAST_ALL)
+                util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SAFELOOP), TOAST_ALL)
                 util.stop_thread()
                 return
             end
@@ -2109,9 +2109,9 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                 end
 
                 if NCSafeLoopUserLimit ~= 0 and (TotalEarnedTypes.safeloop.amount >= NCSafeLoopUserLimit) then
-                    StopSafeLoop(MenuLabels.NCSAFELOOPMAXIMUMVALUEREACHED_TOAST)
+                    StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPMAXIMUMVALUEREACHED_TOAST))
                 elseif not IsPlayerInNightclub() then
-                    StopSafeLoop(MenuLabels.NCSAFELOOPNOTINNIGHTCLUB_TOAST)
+                    StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPNOTINNIGHTCLUB_TOAST))
                 end
 
                 if GetGlobalInt(globals.SafeCap) ~= globals.SafeLimit then
@@ -2140,7 +2140,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
                         StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (1)")
                     end
                 elseif ValueBeforeAdding > globals.SafeLimit then
-                    StopSafeLoop(MenuLabels.NCSAFELOOPSAFEOVERLIMIT_TOAST)
+                    StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPSAFEOVERLIMIT_TOAST))
                 end
 
                 -- okay, so far so good, fill the safe
@@ -2201,17 +2201,17 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
 
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPDELAY, {"ncafkloopdelay"}, MenuLabels.NCSAFELOOPDELAY_DESC, 0, 100000, NCSafeLoopDelay, 100, function(peepeepoopoo)
             NCSafeLoopDelay = peepeepoopoo -- clever
-            util.toast(MenuLabels.NCSAFELOOPDELAY_TOAST)
+            util.toast(lang.get_localised(MenuLabels.NCSAFELOOPDELAY_TOAST))
         end)
 
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT, {"ncafktransactiontimeout"}, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT_DESC, 1000, NCSafeLoopTransactionTimeout, NCSafeLoopTransactionTimeout, 100, function(peepeepoopoo)
             NCSafeLoopTransactionTimeout = peepeepoopoo -- clever
-            util.toast(MenuLabels.NCSAFELOOPTIMEOUTMODIFIED_TOAST)
+            util.toast(lang.get_localised(MenuLabels.NCSAFELOOPTIMEOUTMODIFIED_TOAST))
         end)
 
         menu.slider(NCSafe, MenuLabels.NCSAFELOOPSTOP, {"ncafkamount"}, MenuLabels.NCSAFELOOPSTOP_DESC, 0, 999999999, 0, 300000, function(value)
             NCSafeLoopUserLimit = value
-            util.toast(MenuLabels.NCSAFELOOPSTOP_TOAST)
+            util.toast(lang.get_localised(MenuLabels.NCSAFELOOPSTOP_TOAST))
         end)
 
         menu.action(NCSafe, MenuLabels.NCRESETSAFEVALUE, {}, MenuLabels.NCRESETSAFEVALUE_DESC, FixNCSafe)
@@ -2284,7 +2284,7 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
 
         menu.toggle_loop(list, MenuLabels.MAXSELLPRICE, {"maxsell"..name}, GetLabelText(MenuLabels.MAXSELLPRICE_DESC, MenuLabels.PRODUCT, MenuLabels.PRODUCT), function()
             if remote.killswitches.maxsellprice then
-                util.toast(MenuLabels.KILLSWITCH_MAXSELLPRICE)
+                util.toast(lang.get_localised(MenuLabels.KILLSWITCH_MAXSELLPRICE))
                 SetGlobalInt(globals.MC[name].Sell1, globals.MC[name].Sell1DefaultValue)
                 SetGlobalFloat(globals.MC[name].Sell2, globals.MC[name].Sell2DefaultValue)
                 util.stop_thread()
@@ -2310,7 +2310,7 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
             var = toggle
             if var then
                 SetGlobalInt(GetMCBusinessProductionSpeed2(MyBusinesses[name].slot), 0)
-                util.toast(MenuLabels.MAXPRODUCTIONSPEED_TOAST)
+                util.toast(lang.get_localised(MenuLabels.MAXPRODUCTIONSPEED_TOAST))
             end
             while var do
                 SetGlobalInt(globals.MC[name].ProSpd1, 500)
@@ -2323,14 +2323,14 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
             if IsInSession() then
                 SetGlobalInt(globals.MC[name].Ratio1, value)
                 SetGlobalInt(globals.MC[name].Ratio2, value)
-                util.toast(MenuLabels.SUPPLYPRODUCTRATIO_TOAST)
+                util.toast(lang.get_localised(MenuLabels.SUPPLYPRODUCTRATIO_TOAST))
             end
         end)
 
         menu.click_slider(list, MenuLabels.MAXIMUMCAPACITY, {"setcap"..name}, MenuLabels.MAXIMUMCAPACITY_DESC, 1, 999, globals.MC[name].CapDefaultValue, 1, function(value)
             if IsInSession() then
                 SetGlobalInt(globals.MC[name].Cap, value)
-                util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
+                util.toast(lang.get_localised(MenuLabels.MAXIMUMCAPACITY_TOAST))
             end
         end)
 
@@ -2367,7 +2367,7 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
 
     menu.toggle_loop(BunkMan, MenuLabels.MAXSELLPRICE, {"maxsellbunker"}, GetLabelText(MenuLabels.MAXSELLPRICE_DESC, MenuLabels.PRODUCT, MenuLabels.PRODUCT), function()
         if remote.killswitches.maxsellprice then
-            util.toast(MenuLabels.KILLSWITCH_MAXSELLPRICE)
+            util.toast(lang.get_localised(MenuLabels.KILLSWITCH_MAXSELLPRICE))
             SetGlobalInt(globals.MC.Bunker.Sell1, globals.MC.Bunker.Sell1DefaultValue)
             SetGlobalFloat(globals.MC.Bunker.Sell2, globals.MC.Bunker.Sell2DefaultValue)
             util.stop_thread()
@@ -2391,7 +2391,7 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
         BunkProSpdVar = peepeepoopoo
         if BunkProSpdVar then
             SetGlobalInt(GetMCBusinessProductionSpeed2(MyBusinesses.Bunker.slot), 0)
-            util.toast(MenuLabels.MAXPRODUCTIONSPEED_TOAST)
+            util.toast(lang.get_localised(MenuLabels.MAXPRODUCTIONSPEED_TOAST))
         else
             SetGlobalInt(globals.MC.Bunker.ProSpd1, 600000)
             SetGlobalInt(globals.MC.Bunker.ProSpd2, 90000)
@@ -2411,14 +2411,14 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
         if IsInSession() then
             SetGlobalInt(globals.MC.Bunker.Ratio1, value) -- no upgrade
             SetGlobalInt(globals.MC.Bunker.Ratio2, value) -- with upgrade
-            util.toast(MenuLabels.SUPPLYPRODUCTRATIO_TOAST)
+            util.toast(lang.get_localised(MenuLabels.SUPPLYPRODUCTRATIO_TOAST))
         end
     end)
 
     menu.click_slider(BunkMan, MenuLabels.MAXIMUMCAPACITY, {"setcapbunker"}, MenuLabels.MAXIMUMCAPACITY_DESC, 1, 999, 100, 1, function(value)
         if IsInSession() then
             SetGlobalInt(globals.MC.Bunker.Cap, value)
-            util.toast(MenuLabels.MAXIMUMCAPACITY_TOAST)
+            util.toast(lang.get_localised(MenuLabels.MAXIMUMCAPACITY_TOAST))
         end
     end)
 
