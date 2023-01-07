@@ -690,15 +690,15 @@ local function GetLabelText(label, ...)
     -- Note: NUMBER OF ARGS GIVEN TO FUNCTION AND ARGS IN LABEL MUST MATCH!
     -- Note: EMPTY ARGS OR DUPLICATE ARGS IN LABEL IS UNDEFINED BEHAVIOUR!
     local args = {...}
-    local str = lang.get_string(label, lang.get_current())
+    local str = lang.get_localised(label)
     for i = 1, #args do
-        str = ReplacePlaceholder(str, lang.get_string(args[i], lang.get_current()), i)
+        str = ReplacePlaceholder(str, lang.get_localised(args[i]), i)
     end
     return str
 end
 local function GetLabelTextLiteral(label, ...)
     local args = {...}
-    local str = lang.get_string(label, lang.get_current())
+    local str = lang.get_localised(label)
     for i = 1, #args do
         str = ReplacePlaceholder(str, args[i], i)
     end
