@@ -1981,7 +1981,7 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
         menu.toggle_loop(list, MenuLabels.MONITOR, {"monitorhub"..name}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.STOCK, MenuLabels.NIGHTCLUB, MenuLabels.INFOOVERLAY), function()
             if IsInSession() then
                 local value = GetGlobalInt(globals.Hub[name].Cap)
-                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_HUBBUSINESS, label, MyBusinesses.Hub[name], value))
+                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_HUBBUSINESS, lang.get_localised(label), MyBusinesses.Hub[name], value))
             end
         end)
 
@@ -2267,7 +2267,7 @@ local MCMan = menu.list(menu.my_root(), GetLabelText(MenuLabels.MCBUSINESS), {},
         menu.toggle_loop(list, MenuLabels.MONITOR, {"monitor"..name}, GetLabelText(MenuLabels.MONITOR_DESC, MenuLabels.PRODUCT, MenuLabels.BUSINESS, MenuLabels.INFOOVERLAY), function()
             if IsInSession() then
                 local capacity = GetGlobalInt(globals.MC[name].Cap)
-                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_MCBUSINESS, label, MyBusinesses[name].supplies, MyBusinesses[name].product, capacity))
+                util.draw_debug_text(GetLabelTextLiteral(MenuLabels.INFO_MCBUSINESS, lang.get_localised(label), MyBusinesses[name].supplies, MyBusinesses[name].product, capacity))
             end
         end)
 
