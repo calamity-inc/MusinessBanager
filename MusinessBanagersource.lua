@@ -510,7 +510,7 @@ local globals = {
 
     SafeLimit         = 300000,
     SafeStatus1       = 1648769,
-    SafeStatus2       = 2764411,
+    SafeStatus2       = 2764413,
 
     MCSupplyTime    = 1648637+1, -- above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), unsure why +1
 
