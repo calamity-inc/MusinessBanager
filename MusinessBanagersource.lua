@@ -160,13 +160,13 @@ local MenuLabels = {
     ENFORCEEASIESTMISSION="Enforce Easiest Sell Mission",
     ENFORCEEASIESTMISSION_DESC="This will make sure you always get the quickest and easiest sell mission. Although, if you're too quick you may not get paid?",
 
-    SPECIALCARGOLIST_DESC="Note that sell values cap out at $10m.",
+    SPECIALCARGOLIST_DESC="Note that sell values cap out at $6m.",
 
     SPECIALCARGOWAREHOUSE_DESC="Select which warehouse to monitor and modify, since you can own five of them.",
     SPECIALCARGOMONITOR_DESC="Displays how many special cargo crates you have in the selected warehouse",
     SPECIALCARGONOWAREHOUSE="No Warehouse",
     SPECIALCARGONOWAREHOUSE_DESC="You don't have a warehouse in this slot!",
-    SPECIALCARGOMAXSELLPRICE_DESC="Changes the sell price of your CEO's Special Cargo crates to $10m. Keep this enabled to ensure proper math on future sales",
+    SPECIALCARGOMAXSELLPRICE_DESC="Changes the sell price of your CEO's Special Cargo crates to $6m. Keep this enabled to ensure proper math on future sales",
     OPENSCREEN="Open {1} Screen",
     OPENSCREEN_DESC="Opens the {1} Screen",
     --! {1} could be [TERRORBYTE] or [WAREHOUSE]
