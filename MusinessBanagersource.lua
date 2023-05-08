@@ -1846,7 +1846,7 @@ do
         return (bits & (1 << place)) ~= 0
     end
 
-    menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
+        menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
         if remote.killswitches.specialcargo then
             util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             return
@@ -1870,16 +1870,28 @@ do
         local stat_amount = GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) or 0
         SetGlobalInt(GetSpecialCargoCrateAmountOffset(Selected_Warehouse), stat_amount or 0)
 
+
         if GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) == 0 then
             util.toast("Out of crates") --! needs a label
             TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
             SpecialCargoSourceNow()
-            SetSpecialCargoCrateAmount(Selected_Warehouse, GetSpecialCargoCrateAmountFromStat(Selected_Warehouse))
-            OpenTerrorbyteScreen()
-            util.yield(500)
-            PressBackOnScaleform()
-            SetPlayerInOrgWork(-1)
-            util.yield(200)
+
+            util.toast(GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) )
+
+            local freemode_reset = false
+            while GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) == 0 do
+
+                SetSpecialCargoCrateAmount(Selected_Warehouse, GetSpecialCargoCrateAmountFromStat(Selected_Warehouse))
+                OpenTerrorbyteScreen()
+                util.yield(500)
+                PressBackOnScaleform()
+                if not freemode_reset then
+                    menu.trigger_commands("restart") -- restart the freemode to avoid every issue possible we can get
+                    freemode_reset = true
+                end
+                SetPlayerInOrgWork(-1)
+                util.yield(200)
+            end
         else
             if GetPlayerInOrgWork() == -1 and OpenWarehouseScreen() then
                 if StartSellMission() then
@@ -1891,7 +1903,7 @@ do
 
                         if count > 100 then
                             util.toast("stuck waiting")
-                            PressBackOnScaleform()
+                            TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
                             return
                         end
 
@@ -1900,6 +1912,19 @@ do
                         if errorLocal != 0 then
                             if BitTest(memory.read_int(errorLocal), 8) then
                                 PressBackOnScaleform() -- prevent You can't sell Special Cargo at this time
+                                break
+                            end
+                        end
+
+                        local completedLocal = memory.script_local("gb_contraband_sell", 120 + 2)
+
+                        if completedLocal != 0 then
+                            if memory.read_int(completedLocal) == 3 then
+                                util.toast("success")
+                                break
+                            else
+                                util.toast("killing script!")
+                                TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
                             end
                         end
 
