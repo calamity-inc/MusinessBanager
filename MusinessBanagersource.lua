@@ -1874,6 +1874,9 @@ do
             -- This may or may not "out of crates" bugs
             SetSpecialCargoCrateAmount(Selected_Warehouse, GetSpecialCargoCrateAmountFromStat(Selected_Warehouse))
             -----------------------------
+            OpenTerrorbyteScreen()
+            util.yield(500)
+            PressBackOnScaleform()
             SetPlayerInOrgWork(-1)
             util.yield(200)
         else
