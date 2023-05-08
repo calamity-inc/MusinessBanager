@@ -1842,6 +1842,10 @@ do
         end
     end
 
+    local function BitTest(bits, place)
+        return (bits & (1 << place)) ~= 0
+    end
+
     menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
         if remote.killswitches.specialcargo then
             util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
@@ -1870,10 +1874,7 @@ do
             util.toast("Out of crates") --! needs a label
             TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
             SpecialCargoSourceNow()
-            -----------------------------
-            -- This may or may not "out of crates" bugs
             SetSpecialCargoCrateAmount(Selected_Warehouse, GetSpecialCargoCrateAmountFromStat(Selected_Warehouse))
-            -----------------------------
             OpenTerrorbyteScreen()
             util.yield(500)
             PressBackOnScaleform()
@@ -1892,6 +1893,14 @@ do
                             util.toast("stuck waiting")
                             PressBackOnScaleform()
                             return
+                        end
+
+                        local errorLocal = memory.script_local("appsecuroserv", 556)
+
+                        if errorLocal != 0 then
+                            if BitTest(memory.read_int(errorLocal), 8) then
+                                PressBackOnScaleform() -- prevent You can't sell Special Cargo at this time
+                            end
                         end
 
                         util.toast("Waiting...")
