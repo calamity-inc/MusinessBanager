@@ -1871,9 +1871,6 @@ do
             util.toast("Out of crates") --! needs a label
             TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
             SpecialCargoSourceNow()
-
-            util.toast(GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) )
-
             local freemode_reset = false
             while GetSpecialCargoCrateAmountFromStat(Selected_Warehouse) == 0 do
 
