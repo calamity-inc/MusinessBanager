@@ -1842,10 +1842,6 @@ do
         end
     end
 
-    local function BitTest(bits, place)
-        return (bits & (1 << place)) ~= 0
-    end
-
         menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
         if remote.killswitches.specialcargo then
             util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
@@ -1910,7 +1906,7 @@ do
                         local errorLocal = memory.script_local("appsecuroserv", 556)
 
                         if errorLocal != 0 then
-                            if BitTest(memory.read_int(errorLocal), 8) then
+                            if IsBitSet(memory.read_int(errorLocal), 8) then
                                 PressBackOnScaleform() -- prevent You can't sell Special Cargo at this time
                                 break
                             end
