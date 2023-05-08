@@ -1841,8 +1841,8 @@ do
             SetPlayerPropertyID(-1)
         end
     end
-
-        menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
+    
+    menu.toggle_loop(SCMan, "AFK Money Loop", {"scafkloop"}, "For best results, have a stable internet connection and a high framerate.", function() --! needs a label
         if remote.killswitches.specialcargo then
             util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SPECIALCARGO))
             return
