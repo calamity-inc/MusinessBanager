@@ -1900,7 +1900,7 @@ do
                             return
                         end
 
-                        local errorLocal = memory.script_local("appsecuroserv", 556)
+                        local errorLocal = memory.script_local("appsecuroserv", 557)
 
                         if errorLocal != 0 then
                             if IsBitSet(memory.read_int(errorLocal), 8) then
@@ -1909,7 +1909,7 @@ do
                             end
                         end
 
-                        local completedLocal = memory.script_local("gb_contraband_sell", 120 + 2)
+                        local completedLocal = memory.script_local("gb_contraband_sell", 121 + 2)
 
                         if completedLocal != 0 then
                             if memory.read_int(completedLocal) == 3 then
