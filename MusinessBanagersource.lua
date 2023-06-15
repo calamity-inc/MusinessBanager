@@ -1260,13 +1260,13 @@ end
 
 local function GetOrgType()
     -- Returns -1, 0, 1. None, CEO, MC. This will only work if you are the boss of the org
-    return GetGlobalInt(GetOrgOffset() + 428)
+    return GetGlobalInt(GetOrgOffset() + 429)
 end
 
 local function RegisterAsCEO()
     if IsInSession() and not IsInOrg() then
         SetGlobalInt(GetOrgOffset(), players.user()) -- Set self as boss
-        SetGlobalInt(GetOrgOffset() + 428, 0) -- Set type to CEO
+        SetGlobalInt(GetOrgOffset() + 429, 0) -- Set type to CEO
     end
 end
 
