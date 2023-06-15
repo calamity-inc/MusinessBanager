@@ -1899,7 +1899,7 @@ do
                             TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME(locals.SpecialCargoSecuroString)
                             return
                         end
-
+                        -- [[update]]
                         local errorLocal = memory.script_local("appsecuroserv", 557)
 
                         if errorLocal != 0 then
@@ -1908,7 +1908,7 @@ do
                                 break
                             end
                         end
-
+                        -- [[update]]
                         local completedLocal = memory.script_local("gb_contraband_sell", 121 + 2)
 
                         if completedLocal != 0 then
