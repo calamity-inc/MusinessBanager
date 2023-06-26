@@ -1281,7 +1281,7 @@ local function GetNightClubHubOffset()
 end
 
 local function GetNightClubOffset()
-    return (GetOnlineWorkOffset() + 336) -- CLUB_OWNER_X
+    return (GetOnlineWorkOffset() + 354) -- CLUB_OWNER_X
 end
 
 local function GetWarehouseOffset()
