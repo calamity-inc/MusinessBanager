@@ -1851,6 +1851,12 @@ do
             return
         end
 
+        local block_bgscript = menu.ref_by_path("Online>Enhancements>Block Background Script")
+        if not block_bgscript.value then
+            block_bgscript.value = true
+            util.toast("Block Background Script is not enabled, forcing it on to avoid problems.")
+        end
+
         for index, ref in ipairs(SCRefs) do
             if not menu.get_value(ref) then
                 menu.trigger_command(ref, "on")
