@@ -823,7 +823,7 @@ do
 end
 --#endregion Translation Functions
 
-local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.gg/help/money", MenuLabels.FINDSAFERWAYS_DESC)
+local menu_findsaferways = menu.hyperlink(menu.my_root(), MenuLabels.FINDSAFERWAYS, "https://stand.sh/help/money", MenuLabels.FINDSAFERWAYS_DESC)
 if not SCRIPT_SILENT_START then
     util.toast(lang.get_string(MenuLabels.WARNINGRISKY_TOAST, lang.get_current()))
 end
