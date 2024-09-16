@@ -2123,16 +2123,6 @@ util.create_tick_handler(function()
     if IsInSession() then
         PopulateMyBusinessesTable()
 
-        for slot = 0, 4 do
-            local property_id = GetWarehousePropertyFromSlot(slot)
-            if property_id ~= 0 then
-                local property_name = WarehousePropertyInfo[property_id].name
-                MenuCurrentWarehouses[slot] = {property_name, {"warehouse"..property_name}, "", property_id}
-            else
-                MenuCurrentWarehouses[slot] = {MenuLabels.SPECIALCARGONOWAREHOUSE, {"warehouse".."invalid"}, MenuLabels.SPECIALCARGONOWAREHOUSE_DESC}
-            end
-        end
-
         FixNCHubCapacities()
     end
     return true
