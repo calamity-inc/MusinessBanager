@@ -2152,8 +2152,6 @@ util.create_tick_handler(function()
             end
         end
 
-        menu.set_list_action_options(WarehouseSelector, MenuCurrentWarehouses)
-
         FixNCHubCapacities()
     end
     return true
