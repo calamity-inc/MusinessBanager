@@ -2111,25 +2111,6 @@ if not IS_RELEASE_VERSION then
         end
     end)
 
-    local MBDebug_CEO = menu.list(MBDebug, "CEO Shit", {"mbdebugceo"})
-    for slot = 0, 4 do
-        local property_id = GetWarehousePropertyFromSlot(slot)
-        if property_id ~= 0 then
-            local property_name = WarehousePropertyInfo[property_id].name
-            MenuCurrentWarehouses[slot] = {property_name, {"warehouse"..property_name}, ""}
-        else
-            MenuCurrentWarehouses[slot] = {MenuLabels.SPECIALCARGONOWAREHOUSE, {"warehouse".."invalid"}, MenuLabels.SPECIALCARGONOWAREHOUSE_DESC}
-        end
-    end
-
-    for slot = 0, 4 do
-        local warehouse_list = menu.list(MBDebug_CEO, "Slot "..slot)
-        RegisterUpdatingReadOnlyCommand(warehouse_list, "Property",        function() return MenuCurrentWarehouses[slot][4] or "" end)
-        RegisterUpdatingReadOnlyCommand(warehouse_list, "Property Name",   function() return MenuCurrentWarehouses[slot][1] end)
-        RegisterUpdatingReadOnlyCommand(warehouse_list, "Crates Global",   function() return GetGlobalInt(GetSpecialCargoCrateAmountOffset(slot)) end)
-        RegisterUpdatingReadOnlyCommand(warehouse_list, "Crates Stat",     function() return GetSpecialCargoCrateAmountFromStat(slot) end)
-    end
-
     --menu.action(MBDebug_CEO, "Sync Globals With Stats")
 end
 --------------------------
@@ -2141,18 +2122,6 @@ util.create_tick_handler(function()
 
     if IsInSession() then
         PopulateMyBusinessesTable()
-
-        for slot = 0, 4 do
-            local property_id = GetWarehousePropertyFromSlot(slot)
-            if property_id ~= 0 then
-                local property_name = WarehousePropertyInfo[property_id].name
-                MenuCurrentWarehouses[slot] = {property_name, {"warehouse"..property_name}, "", property_id}
-            else
-                MenuCurrentWarehouses[slot] = {MenuLabels.SPECIALCARGONOWAREHOUSE, {"warehouse".."invalid"}, MenuLabels.SPECIALCARGONOWAREHOUSE_DESC}
-            end
-        end
-
-        menu.set_list_action_options(WarehouseSelector, MenuCurrentWarehouses)
 
         FixNCHubCapacities()
     end
