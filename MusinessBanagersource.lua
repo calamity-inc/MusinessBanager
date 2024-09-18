@@ -510,7 +510,7 @@ local globals = {
 
     SafeLimit         = 300000,
     SafeStatus1       = 1663308, -- freemode, bitset below "CLUB_PAY"
-    SafeStatus2       = 2707517, -- freemode
+    SafeStatus2       = 2707518, -- freemode
 
     MCSupplyTime    = 1663174+1, -- freemode, above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), +1 because array
 
