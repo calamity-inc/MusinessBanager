@@ -153,6 +153,9 @@ local MenuLabels = {
     RESUPPLY="Resupply",
     RESUPPLY_DESC="Will instantly deliver supplies to your business, free of charge",
 
+    FORCERESUPPLY="Force Resupply",
+    FORCERESUPPLY_DESC="If automatic resupply stops working and you are *OUT* of supplies, press this once and hope that it kickstarts everything. Also try restarting your business.",
+
     TRIGGERPRODUCTION="Trigger Production",
     TRIGGERPRODUCTION_DESC="Puts production into effect immediately",
     TRIGGERPRODUCTION_TOAST="Production Triggered.",
@@ -2001,6 +2004,12 @@ local BunkMan = menu.list(menu.my_root(), MenuLabels.BUNKER, {}, MenuLabels.BUNK
                     util.yield(5000)
                 end
             end
+        end
+    end)
+
+    menu.action(BunkMan, MenuLabels.FORCERESUPPLY, {"forceresupply"}, MenuLabels.FORCERESUPPLY_DESC, function()
+        if IsInSession() and MyBusinesses.Bunker.property ~= 0 then
+            ResupplyBusinessSlot(MyBusinesses.Bunker.slot)
         end
     end)
 
