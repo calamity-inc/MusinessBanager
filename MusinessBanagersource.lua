@@ -1276,7 +1276,7 @@ end
 -- Business / Other Online Work Stuff [[update]]
 local function GetOnlineWorkOffset()
     -- GLOBAL_PLAYER_STAT
-    return (1845281 + 1 + (players.user() * 889) + 268)
+    return (1845221 + 1 + (players.user() * 889) + 268)
 end
 
 local function GetNightClubHubOffset()
