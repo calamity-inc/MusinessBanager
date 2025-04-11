@@ -512,10 +512,10 @@ local globals = {
     },
 
     SafeLimit         = 300000,
-    SafeStatus1       = 1668129, -- freemode, bitset below "CLUB_PAY"
+    SafeStatus1       = 1668130, -- freemode, bitset below "CLUB_PAY"
     SafeStatus2       = 2707861, -- freemode
 
-    MCSupplyTime    = 1667995+1, -- freemode, above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), +1 because array
+    MCSupplyTime    = 1667996+1, -- freemode, above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), +1 because array
 
     SpecialCargoMaxSellPriceValue   = 6000000,
 
