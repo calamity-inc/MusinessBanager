@@ -1732,129 +1732,131 @@ local NCMan = menu.list(menu.my_root(), MenuLabels.NIGHTCLUB, {}, MenuLabels.NCL
             end
         end)
 
-        local NCSafeLoopDelay = 200
-        local NCSafeLoopTransactionTimeout = 30000
-        local NCSafeLoopUserLimit = 0
+        if false then
+            local NCSafeLoopDelay = 200
+            local NCSafeLoopTransactionTimeout = 30000
+            local NCSafeLoopUserLimit = 0
 
-        menu.toggle_loop(NCSafe, MenuLabels.NCSAFELOOP, {"ncafkloop"}, MenuLabels.NCSAFELOOP_DESC, function(toggle)
-            if remote.killswitches.safeloop then
-                util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SAFELOOP), TOAST_ALL)
-                util.stop_thread()
-                return
-            end
-
-            if IsInSession() then
-
-                local function StopSafeLoop(msg)
-                    util.toast(msg, TOAST_ALL)
+            menu.toggle_loop(NCSafe, MenuLabels.NCSAFELOOP, {"ncafkloop"}, MenuLabels.NCSAFELOOP_DESC, function(toggle)
+                if remote.killswitches.safeloop then
+                    util.toast(lang.get_localised(MenuLabels.KILLSWITCH_SAFELOOP), TOAST_ALL)
                     util.stop_thread()
+                    return
                 end
 
-                if NCSafeLoopUserLimit ~= 0 and (TotalEarnedTypes.safeloop.amount >= NCSafeLoopUserLimit) then
-                    StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPMAXIMUMVALUEREACHED_TOAST))
-                elseif not IsPlayerInNightclub() then
-                    StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPNOTINNIGHTCLUB_TOAST))
-                end
+                if IsInSession() then
 
-                if GetGlobalInt(globals.SafeCap) ~= globals.SafeLimit then
-                    SetGlobalInt(globals.SafeCap, globals.SafeLimit)
-                    for i = 1, 20 do
-                        SetGlobalInt(globals.SafeRevenue + i, globals.SafeLimit)
+                    local function StopSafeLoop(msg)
+                        util.toast(msg, TOAST_ALL)
+                        util.stop_thread()
                     end
-                end
 
-                local MyPed = PLAYER_PLAYER_PED_ID()
-                ENTITY_FREEZE_ENTITY_POSITION(MyPed, true)
+                    if NCSafeLoopUserLimit ~= 0 and (TotalEarnedTypes.safeloop.amount >= NCSafeLoopUserLimit) then
+                        StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPMAXIMUMVALUEREACHED_TOAST))
+                    elseif not IsPlayerInNightclub() then
+                        StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPNOTINNIGHTCLUB_TOAST))
+                    end
 
-                local ValueBeforeAdding = GetSafeCashValueFromStat()
+                    if GetGlobalInt(globals.SafeCap) ~= globals.SafeLimit then
+                        SetGlobalInt(globals.SafeCap, globals.SafeLimit)
+                        for i = 1, 20 do
+                            SetGlobalInt(globals.SafeRevenue + i, globals.SafeLimit)
+                        end
+                    end
 
-                SetEntityCoords(MyPed, NCSafePos)
+                    local MyPed = PLAYER_PLAYER_PED_ID()
+                    ENTITY_FREEZE_ENTITY_POSITION(MyPed, true)
 
-                if ValueBeforeAdding == globals.SafeLimit then
+                    local ValueBeforeAdding = GetSafeCashValueFromStat()
+
+                    SetEntityCoords(MyPed, NCSafePos)
+
+                    if ValueBeforeAdding == globals.SafeLimit then
+                        local timeout = util.current_time_millis() + NCSafeLoopTransactionTimeout
+                        while timeout > util.current_time_millis() and ValueBeforeAdding == GetSafeCashValueFromStat() do
+                            util.yield()
+                        end
+                        if ValueBeforeAdding > GetSafeCashValueFromStat() then
+                            -- we've picked it up!
+                            ValueBeforeAdding = GetSafeCashValueFromStat()
+                        else
+                            StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (1)")
+                        end
+                    elseif ValueBeforeAdding > globals.SafeLimit then
+                        StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPSAFEOVERLIMIT_TOAST))
+                    end
+
+                    -- okay, so far so good, fill the safe
+                    SetNightclubPayTimeLeft(-1)
+
+                    -- check if the safe value changes
                     local timeout = util.current_time_millis() + NCSafeLoopTransactionTimeout
                     while timeout > util.current_time_millis() and ValueBeforeAdding == GetSafeCashValueFromStat() do
                         util.yield()
                     end
-                    if ValueBeforeAdding > GetSafeCashValueFromStat() then
-                        -- we've picked it up!
-                        ValueBeforeAdding = GetSafeCashValueFromStat()
+
+                    -- if the safe doesn't change
+                    if timeout < util.current_time_millis() and ValueBeforeAdding == GetSafeCashValueFromStat() then
+                        -- we've hit transaction timeout... shit
+                        StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (2)")
+                    end
+
+                    local ValueAfterAdding = GetSafeCashValueFromStat()
+
+                    if ValueAfterAdding > globals.SafeLimit then
+                        -- shit, its over 300k
+                        StopSafeLoop(MenuLabels.NCSAFELOOPSAFEOVERLIMIT_TOAST)
+                    end
+
+                    SetEntityCoords(MyPed, NCSafePos)
+
+                    timeout = util.current_time_millis() + NCSafeLoopTransactionTimeout
+                    while timeout > util.current_time_millis() and ValueAfterAdding == GetSafeCashValueFromStat() do
+                        -- wait for the user to collect the money
+                        util.yield()
+                    end
+
+                    -- if the safe doesn't change
+                    if timeout < util.current_time_millis() and ValueAfterAdding == GetSafeCashValueFromStat() then
+                        -- we've hit transaction timeout... shit
+                        StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (3)")
+                    end
+
+                    if ValueAfterAdding > GetSafeCashValueFromStat() then
+                        -- success! user has collected the money
+                        AddToTotalEarned(globals.SafeLimit, TotalEarnedTypes.safeloop)
+                        if NCSafeLoopDelay and NCSafeLoopDelay > 0 then
+                            util.yield(NCSafeLoopDelay)
+                        end
                     else
-                        StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (1)")
+                        StopSafeLoop(MenuLabels.NCSAFELOOPSOMETHINGWENTWRONG_TOAST)
                     end
-                elseif ValueBeforeAdding > globals.SafeLimit then
-                    StopSafeLoop(lang.get_localised(MenuLabels.NCSAFELOOPSAFEOVERLIMIT_TOAST))
-                end
 
-                -- okay, so far so good, fill the safe
-                SetNightclubPayTimeLeft(-1)
-
-                -- check if the safe value changes
-                local timeout = util.current_time_millis() + NCSafeLoopTransactionTimeout
-                while timeout > util.current_time_millis() and ValueBeforeAdding == GetSafeCashValueFromStat() do
                     util.yield()
                 end
-
-                -- if the safe doesn't change
-                if timeout < util.current_time_millis() and ValueBeforeAdding == GetSafeCashValueFromStat() then
-                    -- we've hit transaction timeout... shit
-                    StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (2)")
+            end, function()
+                ENTITY_FREEZE_ENTITY_POSITION(PLAYER_PLAYER_PED_ID(), false)
+                if remote.killswitches.safeloop then
+                    return
                 end
+                TeleportTo({x = -1615.86, y = -3015.5, z = -75.2})
+            end)
 
-                local ValueAfterAdding = GetSafeCashValueFromStat()
+            menu.slider(NCSafe, MenuLabels.NCSAFELOOPSTOP, {"ncafkamount"}, MenuLabels.NCSAFELOOPSTOP_DESC, 0, 999999999, 0, 300000, function(value)
+                NCSafeLoopUserLimit = value
+                util.toast(lang.get_localised(MenuLabels.NCSAFELOOPSTOP_TOAST))
+            end)
 
-                if ValueAfterAdding > globals.SafeLimit then
-                    -- shit, its over 300k
-                    StopSafeLoop(MenuLabels.NCSAFELOOPSAFEOVERLIMIT_TOAST)
-                end
+            menu.slider(NCSafe, MenuLabels.NCSAFELOOPDELAY, {"ncafkloopdelay"}, MenuLabels.NCSAFELOOPDELAY_DESC, 0, 100000, NCSafeLoopDelay, 100, function(peepeepoopoo)
+                NCSafeLoopDelay = peepeepoopoo -- clever
+                util.toast(lang.get_localised(MenuLabels.NCSAFELOOPDELAY_TOAST))
+            end)
 
-                SetEntityCoords(MyPed, NCSafePos)
-
-                timeout = util.current_time_millis() + NCSafeLoopTransactionTimeout
-                while timeout > util.current_time_millis() and ValueAfterAdding == GetSafeCashValueFromStat() do
-                    -- wait for the user to collect the money
-                    util.yield()
-                end
-
-                -- if the safe doesn't change
-                if timeout < util.current_time_millis() and ValueAfterAdding == GetSafeCashValueFromStat() then
-                    -- we've hit transaction timeout... shit
-                    StopSafeLoop(GetLabelText(MenuLabels.PREFIX_SAFELOOP, MenuLabels.NCSAFELOOPTIMEOUT_TOAST) .. " (3)")
-                end
-
-                if ValueAfterAdding > GetSafeCashValueFromStat() then
-                    -- success! user has collected the money
-                    AddToTotalEarned(globals.SafeLimit, TotalEarnedTypes.safeloop)
-                    if NCSafeLoopDelay and NCSafeLoopDelay > 0 then
-                        util.yield(NCSafeLoopDelay)
-                    end
-                else
-                    StopSafeLoop(MenuLabels.NCSAFELOOPSOMETHINGWENTWRONG_TOAST)
-                end
-
-                util.yield()
-            end
-        end, function()
-            ENTITY_FREEZE_ENTITY_POSITION(PLAYER_PLAYER_PED_ID(), false)
-            if remote.killswitches.safeloop then
-                return
-            end
-            TeleportTo({x = -1615.86, y = -3015.5, z = -75.2})
-        end)
-
-        menu.slider(NCSafe, MenuLabels.NCSAFELOOPDELAY, {"ncafkloopdelay"}, MenuLabels.NCSAFELOOPDELAY_DESC, 0, 100000, NCSafeLoopDelay, 100, function(peepeepoopoo)
-            NCSafeLoopDelay = peepeepoopoo -- clever
-            util.toast(lang.get_localised(MenuLabels.NCSAFELOOPDELAY_TOAST))
-        end)
-
-        menu.slider(NCSafe, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT, {"ncafktransactiontimeout"}, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT_DESC, 1000, NCSafeLoopTransactionTimeout, NCSafeLoopTransactionTimeout, 100, function(peepeepoopoo)
-            NCSafeLoopTransactionTimeout = peepeepoopoo -- clever
-            util.toast(lang.get_localised(MenuLabels.NCSAFELOOPTIMEOUTMODIFIED_TOAST))
-        end)
-
-        menu.slider(NCSafe, MenuLabels.NCSAFELOOPSTOP, {"ncafkamount"}, MenuLabels.NCSAFELOOPSTOP_DESC, 0, 999999999, 0, 300000, function(value)
-            NCSafeLoopUserLimit = value
-            util.toast(lang.get_localised(MenuLabels.NCSAFELOOPSTOP_TOAST))
-        end)
+            menu.slider(NCSafe, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT, {"ncafktransactiontimeout"}, MenuLabels.NCSAFELOOPTRANSACTIONTIMEOUT_DESC, 1000, NCSafeLoopTransactionTimeout, NCSafeLoopTransactionTimeout, 100, function(peepeepoopoo)
+                NCSafeLoopTransactionTimeout = peepeepoopoo -- clever
+                util.toast(lang.get_localised(MenuLabels.NCSAFELOOPTIMEOUTMODIFIED_TOAST))
+            end)
+        end
 
         menu.action(NCSafe, MenuLabels.NCRESETSAFEVALUE, {}, MenuLabels.NCRESETSAFEVALUE_DESC, FixNCSafe)
 
