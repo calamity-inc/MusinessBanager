@@ -401,7 +401,7 @@ local globals = {
     Hub = {
         MaxSellPrice = 4000000 - 2100000,
         ProSpd = 1000,
-        SellCooldownActive = 1964109+7+1, -- appbusinesshub
+        SellCooldownActive = 1964634+7+1, -- appbusinesshub
 
         Cargo = {
             SellDefaultValue    = 10000,
@@ -512,17 +512,17 @@ local globals = {
     },
 
     SafeLimit         = 300000,
-    SafeStatus1       = 1673941, -- freemode, bitset below "CLUB_PAY"
-    SafeStatus2       = 2708714, -- freemode
+    SafeStatus1       = 1673947, -- freemode, bitset below "CLUB_PAY"
+    SafeStatus2       = 2708825, -- freemode
 
-    MCSupplyTime    = 1673807+1, -- freemode, above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), +1 because array
+    MCSupplyTime    = 1673813+1, -- freemode, above "BPLJT_LOWW", if (!func_XXXXX(bVar1)), +1 because array
 
     SpecialCargoMaxSellPriceValue   = 6000000,
 
-    SpecialCargoSellFuncSomething   = 1950043, -- gb_contraband_sell, PED::SET_PED_SHOOT_RATE(iParam0, == 1
-    SpecialCargoDeliveryCrates      = 1882537+13, -- freemode, "SRC_CRG_TICKER_1", == 1
+    SpecialCargoSellFuncSomething   = 1950547, -- gb_contraband_sell, PED::SET_PED_SHOOT_RATE(iParam0, == 1
+    SpecialCargoDeliveryCrates      = 1882617+13, -- freemode, "SRC_CRG_TICKER_1", == 1
 
-    IsUsingComputerScreen = 77342, -- freemode
+    IsUsingComputerScreen = 77397, -- freemode
 }
 
 local locals = {
@@ -532,27 +532,27 @@ local locals = {
     --appsecuroserv
     SpecialCargoSecuroString = "appsecuroserv",
     SpecialCargoSecuroArgs = 4592, -- arg count needed to properly start the script, possibly outdated
-    SpecialCargoCurrentProperty = 759, -- warehouse property id (non-global-index based))
-    SpecialCargoScreenStatus = 582, -- status: 3011 = sold? 1 = error, 3012 = confirm?
-    SpecialCargoCratesToSell = 763, -- "MP_WH_SELL", "WH
-    SpecialCargoSellFromOption = 764, -- ^^^^^^^ (not current property id, but buttons [1-3])
-    SpecialCargoCurrentBitset = 583, -- ^^^^^^^ bit 13 controls if it is warehouse or securoserv
-    SpecialCargoStartingPosX = 780, -- struct<3> Local_ -- float  (if distance to this from self is greater than 5f to this local, kill script)
-    SpecialCargoStartingPosY = 780+1, -- ^^^^^^^
-    SpecialCargoStartingPosZ = 780+2, -- ^^^^^^^
+    SpecialCargoCurrentProperty = 766, -- warehouse property id (non-global-index based))
+    SpecialCargoScreenStatus = 589, -- status: 3011 = sold? 1 = error, 3012 = confirm?
+    SpecialCargoCratesToSell = 770, -- "MP_WH_SELL", "WH
+    SpecialCargoSellFromOption = 771, -- ^^^^^^^ (not current property id, but buttons [1-3])
+    SpecialCargoCurrentBitset = 590, -- ^^^^^^^ bit 13 controls if it is warehouse or securoserv
+    SpecialCargoStartingPosX = 787, -- struct<3> Local_ -- float  (if distance to this from self is greater than 5f to this local, kill script)
+    SpecialCargoStartingPosY = 787+1, -- ^^^^^^^
+    SpecialCargoStartingPosZ = 787+2, -- ^^^^^^^
 
     --gb_contraband_sell
     SpecialCargoSellString = "gb_contraband_sell",
-    SpecialCargoSellType = 567+584,
-    SpecialCargoSellSubType = 567+7, -- return 5000;
-    SpecialCargoSellAmount = 567+57, -- ^ in function below
-    SpecialCargoSellStatus = 567+583,
+    SpecialCargoSellType = 574+584,
+    SpecialCargoSellSubType = 574+7, -- return 5000;
+    SpecialCargoSellAmount = 574+57, -- ^ in function below
+    SpecialCargoSellStatus = 574+583,
 
     --gb_contraband_buy
     SpecialCargoBuyString = "gb_contraband_buy",
-    SpecialCargoBuyComplete = 625+192,
-    SpecialCargoBuyCollected = 625+186,
-    SpecialCargoBuyCollected2 = 500,
+    SpecialCargoBuyComplete = 632+192,
+    SpecialCargoBuyCollected = 632+186,
+    SpecialCargoBuyCollected2 = 507,
 
     --appHackerTruck
     SpecialCargoBuyScreenString = "appHackerTruck",
@@ -562,11 +562,11 @@ local locals = {
     -- NightClub
     ----------------
     NCSafeScriptString = "freemode",
-    NCSafeTransactionStatus = 20362+1, -- , 39, 0);
-    NCSafeAddMoneyAmount = 20362+2, -- same as above
+    NCSafeTransactionStatus = 20401+1, -- , 39, 0);
+    NCSafeAddMoneyAmount = 20401+2, -- same as above
 
     NCHubScriptString = "appbusinesshub",
-    NCHubSellCooldown = 143, -- a local
+    NCHubSellCooldown = 150, -- a local
     NCHubSellCooldownBit = 27, -- a bitset bit
 
     ----EZNCMission = ,
@@ -575,11 +575,11 @@ local locals = {
     -- MC
     ----------------
     MCSellScriptString = "gb_biker_contraband_sell",
-    MCEZMissionStarted = 729+122, -- == 3 && (Local
-    MCEZMission = 729+17, -- ^ function below
+    MCEZMissionStarted = 736+122, -- == 3 && (Local
+    MCEZMission = 736+17, -- ^ function below
 
     MCLaptopString = "appbikerbusiness",
-    MCLaptopCurrentProperty = 548, -- (iVar2 > -1 && iVar2 < 7) &&
+    MCLaptopCurrentProperty = 555, -- (iVar2 > -1 && iVar2 < 7) &&
 }
 
 -- Also search for [[update]]
@@ -641,8 +641,8 @@ globals.MC.Bunker.Sell2 = tunables_global+21316
 globals.MC.Bunker.ProSpd1 = tunables_global+21338
 globals.MC.Bunker.ProSpd2 = tunables_global+21339
 globals.MC.Bunker.ProSpd3 = tunables_global+21340
-globals.MC.Bunker.Ratio1 = tunables_global+21095
-globals.MC.Bunker.Ratio2 = tunables_global+21096
+globals.MC.Bunker.Ratio1 = tunables_global+21341
+globals.MC.Bunker.Ratio2 = tunables_global+21342
 globals.MC.Bunker.Cap = tunables_global+21337
 globals.SafeCap = tunables_global+23769
 globals.SafeRevenue = tunables_global+23746
@@ -656,7 +656,7 @@ globals.SpecialCargoCrateMultiplier3 = tunables_global+16682
 globals.SpecialCargoCrateMultiplier2 = tunables_global+16683
 globals.SpecialCargoCrateMultiplier1 = tunables_global+16684
 globals.SpecialCargoBonus = tunables_global+15613
-globals.SpecialCargoDeliveryTime = tunables_global+31962
+globals.SpecialCargoDeliveryTime = tunables_global+31963
 --#endregion Generated by internal tooling
 
 local TotalEarnedTypes = {
@@ -1254,7 +1254,7 @@ end
 -- [[update]]
 local function GetOrgOffset()
     -- GPBD_FM_3
-    return (1892653 + 1 + (players.user() * 615) + 10)
+    return (1892925 + 1 + (players.user() * 615) + 10)
 end
 
 local function IsInOrg()
@@ -1276,7 +1276,7 @@ end
 -- Business / Other Online Work Stuff [[update]]
 local function GetOnlineWorkOffset()
     -- GLOBAL_PLAYER_STAT
-    return (1845250 + 1 + (players.user() * 880) + 260)
+    return (1845298 + 1 + (players.user() * 881) + 260)
 end
 
 local function GetNightClubHubOffset()
@@ -1413,7 +1413,7 @@ end
 -- [[update]]
 local function GetPlayerPropertyOffset()
     -- GlobalplayerBD
-    return (2658291 + 1 + (players.user() * 468) + 325 + 8)
+    return (2658293 + 1 + (players.user() * 468) + 325 + 8)
 end
 
 local function GetPlayerPropertyID()
